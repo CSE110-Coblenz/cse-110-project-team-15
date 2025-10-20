@@ -9,6 +9,12 @@ On the night of March 14th, a world-renowned mathematician by the name of Michae
 - 💬 **Interview suspects** who each have unique motives and secrets.
 - 🧠 **Piece together evidence** to determine who the true killer is.
 
+## 🧩 Educational Focus:
+This game integrates **algebra** concepts into its mystery-solving mechanics:
+- **Solving for unknown variables**
+- **Solving linear systems of equations**
+- **Identifying graphs shapes & equations**
+
 ## 🏗️ Development
 - **Genre:** Educational / Detective / Puzzle
 - **Target Audience:** Algebra 1 & 2 Students (Middle-High School)
