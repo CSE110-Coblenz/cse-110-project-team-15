@@ -15,9 +15,9 @@ export class MenuScreenView implements View {
 		const title = new Konva.Text({
 			x: STAGE_WIDTH / 2,
 			y: 150,
-			text: "LEMON CLICKER",
+			text: "Manner's Murder: An Algebraic Mystery",
 			fontSize: 48,
-			fontFamily: "Arial",
+			fontFamily: "serif",
 			fill: "yellow",
 			stroke: "orange",
 			strokeWidth: 2,
