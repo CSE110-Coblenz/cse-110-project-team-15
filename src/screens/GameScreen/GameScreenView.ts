@@ -61,11 +61,26 @@ export class GameScreenView implements View {
 		});
 		this.group.add(this.timerText);
 
+		const door = new Konva.Rect({
+			x: STAGE_WIDTH - 180,
+			y: STAGE_HEIGHT / 2 - 180,
+			width: 120,
+			height: 200,
+			fill: "654321",
+			stroke: "black",
+			strokeWidth: 4,
+			cornerRadius: 10,
+			shadowColor: "black",
+			shadowBlur: 10,
+			shadowOpacity: 0.3,
+		});
+		this.door = door;
+		this.group.add(door);
+
 		// Load and display the detective image using Konva.Image.fromURL()
 		Konva.Image.fromURL("/detective.png", (image) => {
 			image.width(100);
 			image.height(120);
-
 	
 			image.on("click", onLemonClick);
 			this.detectiveImage = image;
@@ -78,29 +93,6 @@ export class GameScreenView implements View {
 	 */
 	updateScore(score: number): void {
 		this.scoreText.text(`Score: ${score}`);
-		this.group.getLayer()?.draw();
-	}
-
-	/**
-	 * Randomize lemon position
-	 */
-	randomizeLemonPosition(): void {
-		if (!this.detectiveImage) return;
-
-		// Define safe boundaries (avoid edges)
-		const padding = 100;
-		const minX = padding;
-		const maxX = STAGE_WIDTH - padding;
-		const minY = padding;
-		const maxY = STAGE_HEIGHT - padding;
-
-		// Generate random position
-		const randomX = Math.random() * (maxX - minX) + minX;
-		const randomY = Math.random() * (maxY - minY) + minY;
-
-		// Update lemon position
-		this.detectiveImage.x(randomX);
-		this.detectiveImage.y(randomY);
 		this.group.getLayer()?.draw();
 	}
 
