@@ -7,7 +7,9 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
  */
 export class GameScreenView implements View {
 	private group: Konva.Group;
-	private lemonImage: Konva.Image | Konva.Circle | null = null;
+	// private lemonImage: Konva.Image | Konva.Circle | null = null;
+	private detectiveImage: Konva.Image | null = null;
+	private door: Konva.Rect | null = null;
 	private scoreText: Konva.Text;
 	private timerText: Konva.Text;
 
@@ -20,9 +22,22 @@ export class GameScreenView implements View {
 			y: 0,
 			width: STAGE_WIDTH,
 			height: STAGE_HEIGHT,
-			fill: "#87CEEB", // Sky blue
+			fill: "f0e6d2", // Parchment color
 		});
 		this.group.add(bg);
+
+		// Room Label
+		const titleText = new Konva.Text({
+			x: STAGE_WIDTH / 2,
+			y: 30,
+			text: "Chapter 1: Enter the Mansion",
+			fontSize: 28,
+			fontFamily: "serif",
+			fill: "darkRed",
+			align: "center",
+		});
+		titleText.offsetX(titleText.width() / 2);
+		this.group.add(titleText);
 
 		// Score display (top-left)
 		this.scoreText = new Konva.Text({
@@ -41,20 +56,20 @@ export class GameScreenView implements View {
 			y: 20,
 			text: "Time: 60",
 			fontSize: 32,
-			fontFamily: "Arial",
-			fill: "red",
+			fontFamily: "serif",
+			fill: "darkRed",
 		});
 		this.group.add(this.timerText);
 
-		// TODO: Task 2 - Load and display lemon image using Konva.Image.fromURL()
-		// Placeholder circle (remove this when implementing the image)
-		Konva.Image.fromURL("/lemon.png", (image) => {
+		// Load and display the detective image using Konva.Image.fromURL()
+		Konva.Image.fromURL("/detective.png", (image) => {
 			image.width(100);
-			image.height(100);
+			image.height(120);
+
 	
 			image.on("click", onLemonClick);
-			this.lemonImage = image;
-			this.group.add(this.lemonImage);
+			this.detectiveImage = image;
+			this.group.add(this.detectiveImage);
 		})
 	}
 
@@ -70,7 +85,7 @@ export class GameScreenView implements View {
 	 * Randomize lemon position
 	 */
 	randomizeLemonPosition(): void {
-		if (!this.lemonImage) return;
+		if (!this.detectiveImage) return;
 
 		// Define safe boundaries (avoid edges)
 		const padding = 100;
@@ -84,8 +99,8 @@ export class GameScreenView implements View {
 		const randomY = Math.random() * (maxY - minY) + minY;
 
 		// Update lemon position
-		this.lemonImage.x(randomX);
-		this.lemonImage.y(randomY);
+		this.detectiveImage.x(randomX);
+		this.detectiveImage.y(randomY);
 		this.group.getLayer()?.draw();
 	}
 
