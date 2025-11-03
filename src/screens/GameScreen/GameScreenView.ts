@@ -40,22 +40,7 @@ export class GameScreenView implements View {
 		});
 		titleText.offsetX(titleText.width() / 2);
 		this.group.add(titleText);
-
-		// Load and display the detective image using Konva.Image.fromURL()
-		Konva.Image.fromURL("/detective.png", (image) => {
-			image.width(100);
-			image.height(120);
-			image.x(STAGE_WIDTH / 2 - 50);
-			image.y(STAGE_HEIGHT / 2 - 60);
-			image.draggable(true);
-
-			image.on("dragmove", () => this.keepInBounds(image));
-
-			this.detectiveImage = image;
-			this.group.add(image);
-			this.group.getLayer()?.draw();
-		});
-
+		
 		// Load and display the notebook image using Konva.Image.fromURL()
         Konva.Image.fromURL("/notebook_icon.png", (image) => {
                 image.width(60);
@@ -172,13 +157,6 @@ export class GameScreenView implements View {
         this.pageText.text(content);
         this.group.getLayer()?.draw();
     }
-
-	private keepInBounds(image: Konva.Image): void {
-		const x = Math.max(0, Math.min(STAGE_WIDTH - image.width(), image.x()));
-		const y = Math.max(0, Math.min(STAGE_HEIGHT - image.height(), image.y()));
-		image.position({ x, y });
-		this.group.getLayer()?.draw();
-	}
 
 	/**
 	 * Show the screen
