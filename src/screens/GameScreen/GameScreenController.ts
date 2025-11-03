@@ -1,8 +1,8 @@
 import { ScreenController } from "../../types.ts";
 import type { ScreenSwitcher } from "../../types.ts";
-import { GameScreenModel } from "./GameScreenModel.ts";
+// import { GameScreenModel } from "./GameScreenModel.ts";
 import { GameScreenView } from "./GameScreenView.ts";
-import { GAME_DURATION } from "../../constants.ts";
+// import { GAME_DURATION } from "../../constants.ts";
 
 /**
  * GameScreenController - Coordinates game logic between Model and View

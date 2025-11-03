@@ -18,7 +18,7 @@ export class GameScreenView implements View {
 			y: 0,
 			width: STAGE_WIDTH,
 			height: STAGE_HEIGHT,
-			fill: "f0e6d2", // Parchment color
+			fill: "white", // Parchment color
 		});
 		this.group.add(bg);
 
@@ -39,11 +39,23 @@ export class GameScreenView implements View {
 		Konva.Image.fromURL("/detective.png", (image) => {
 			image.width(100);
 			image.height(120);
-	
-			image.on("click", onLemonClick);
+			image.x(STAGE_WIDTH / 2 - 50);
+			image.y(STAGE_HEIGHT / 2 - 60);
+			image.draggable(true);
+
+			image.on("dragmove", () => this.keepInBounds(image));
+
 			this.detectiveImage = image;
-			this.group.add(this.detectiveImage);
-		})
+			this.group.add(image);
+			this.group.getLayer()?.draw();
+		});
+	}
+
+	private keepInBounds(image: Konva.Image): void {
+		const x = Math.max(0, Math.min(STAGE_WIDTH - image.width(), image.x()));
+		const y = Math.max(0, Math.min(STAGE_HEIGHT - image.height(), image.y()));
+		image.position({ x, y });
+		this.group.getLayer()?.draw();
 	}
 
 	/**
