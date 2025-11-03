@@ -7,13 +7,9 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
  */
 export class GameScreenView implements View {
 	private group: Konva.Group;
-	// private lemonImage: Konva.Image | Konva.Circle | null = null;
 	private detectiveImage: Konva.Image | null = null;
-	private door: Konva.Rect | null = null;
-	private scoreText: Konva.Text;
-	private timerText: Konva.Text;
 
-	constructor(onLemonClick: () => void) {
+	constructor() {
 		this.group = new Konva.Group({ visible: false });
 
 		// Background
@@ -39,44 +35,6 @@ export class GameScreenView implements View {
 		titleText.offsetX(titleText.width() / 2);
 		this.group.add(titleText);
 
-		// Score display (top-left)
-		this.scoreText = new Konva.Text({
-			x: 20,
-			y: 20,
-			text: "Score: 0",
-			fontSize: 32,
-			fontFamily: "Arial",
-			fill: "black",
-		});
-		this.group.add(this.scoreText);
-
-		// Timer display (top-right)
-		this.timerText = new Konva.Text({
-			x: STAGE_WIDTH - 150,
-			y: 20,
-			text: "Time: 60",
-			fontSize: 32,
-			fontFamily: "serif",
-			fill: "darkRed",
-		});
-		this.group.add(this.timerText);
-
-		const door = new Konva.Rect({
-			x: STAGE_WIDTH - 180,
-			y: STAGE_HEIGHT / 2 - 180,
-			width: 120,
-			height: 200,
-			fill: "654321",
-			stroke: "black",
-			strokeWidth: 4,
-			cornerRadius: 10,
-			shadowColor: "black",
-			shadowBlur: 10,
-			shadowOpacity: 0.3,
-		});
-		this.door = door;
-		this.group.add(door);
-
 		// Load and display the detective image using Konva.Image.fromURL()
 		Konva.Image.fromURL("/detective.png", (image) => {
 			image.width(100);
@@ -86,22 +44,6 @@ export class GameScreenView implements View {
 			this.detectiveImage = image;
 			this.group.add(this.detectiveImage);
 		})
-	}
-
-	/**
-	 * Update score display
-	 */
-	updateScore(score: number): void {
-		this.scoreText.text(`Score: ${score}`);
-		this.group.getLayer()?.draw();
-	}
-
-	/**
-	 * Update timer display
-	 */
-	updateTimer(timeRemaining: number): void {
-		this.timerText.text(`Time: ${timeRemaining}`);
-		this.group.getLayer()?.draw();
 	}
 
 	/**
