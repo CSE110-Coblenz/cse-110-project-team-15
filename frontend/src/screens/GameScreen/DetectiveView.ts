@@ -45,10 +45,10 @@ export class DetectiveView {
         let dy = 0;
 
         if (this.keysPressed.has("w")) {
-            dy += this.speed;
+            dy -= this.speed;
         }
         if (this.keysPressed.has("s")) {
-            dy -= this.speed;
+            dy += this.speed;
         }
         if (this.keysPressed.has("a")) {
             dx -= this.speed;
