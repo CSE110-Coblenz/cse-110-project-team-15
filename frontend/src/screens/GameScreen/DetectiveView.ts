@@ -21,6 +21,17 @@ export class DetectiveView {
             this.group.add(image);
             this.group.getLayer()?.draw();
         });  
+
+        window.addEventListener(
+            "keydown", (e) => this.keysPressed.add(e.key.toLowerCase())
+        );
+
+        window.addEventListener(
+            "keyup", (e) => this.keysPressed.delete(e.key.toLowerCase())
+        );
+
+        // Start an animation loop for the sprite movement
+        
     }
 
     // Method to move around the sprite
