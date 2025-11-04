@@ -31,7 +31,10 @@ export class DetectiveView {
         );
 
         // Start an animation loop for the sprite movement
-        
+        const animation = new Konva.Animation(
+            () => this.updatePosition(), this.group.getLayer()
+        );
+        animation.start();
     }
 
     // Method to move around the sprite
