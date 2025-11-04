@@ -5,9 +5,9 @@ export class NotebookView {
     // Notebook elements
     private icon: Konva.Image | null = null;
     private group: Konva.Group;
+    private parentGroup: Konva.Group;
     private pageText: Konva.Text;
     private activeTab = "Clues";
-    private parentGroup: Konva.Group;
 
     constructor(parentGroup: Konva.Group) {
         this.parentGroup = parentGroup;
@@ -110,13 +110,13 @@ export class NotebookView {
         let text = "";
         switch (tab) {
         case "Clues":
-            text = "🕵️‍♂️ Clues\n\n- No clues yet.";
+            text = "Clues\n\n- No clues yet.";
             break;
         case "Hints":
-            text = "💡 Hints\n\n- Try exploring the mansion.";
+            text = "Hints\n\n- Try exploring the mansion.";
             break;
         case "Equations":
-            text = "📘 Equations\n\n- y = mx + b\n- ax² + bx + c = 0";
+            text = "Equations\n\n- y = mx + b\n- ax² + bx + c = 0";
             break;
     }
     this.pageText.text(text);

@@ -1,9 +1,10 @@
 import Konva from "konva";
-import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
+import { STAGE_WIDTH, STAGE_HEIGHT, SPEED} from "../../constants.ts";
 
 export class DetectiveView {
     private sprite: Konva.Image | null = null;
     private group: Konva.Group;
+    private keysPressed: Set<string> = new Set();
 
     constructor(group: Konva.Group) {
         this.group = group;
@@ -14,14 +15,17 @@ export class DetectiveView {
             image.height(120);
             image.x(STAGE_WIDTH / 2 - 50);
             image.y(STAGE_HEIGHT / 2 - 60);
-            image.draggable(true);
-        
-            image.on("dragmove", () => this.keepInBounds(image));
-        
+       
             this.sprite = image;
             this.group.add(image);
             this.group.getLayer()?.draw();
         });  
+    }
+
+    // Function to move around the sprite
+    private updatePosition(): void {
+        if (!this.sprite) return;
+
     }
 
     // Function to keep the sprite within the bounds of the screen
