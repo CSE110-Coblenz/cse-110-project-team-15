@@ -18,9 +18,9 @@ export class NotebookView {
 
          // Load and display the notebook image using Konva.Image.fromURL()
         Konva.Image.fromURL("/notebook_icon.png", (image) => {
-            image.width(60);
-            image.height(60);
-            image.x(STAGE_WIDTH - 80);
+            image.width(80);
+            image.height(80);
+            image.x(STAGE_WIDTH / 2 - 380);
             image.y(STAGE_HEIGHT - 80);
             image.on("click", () => this.toggleNotebook());
             this.icon = image;
