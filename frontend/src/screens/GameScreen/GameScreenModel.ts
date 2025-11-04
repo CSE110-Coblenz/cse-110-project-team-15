@@ -1,0 +1,29 @@
+// DO NOT MODIFY. Will be used for updating game state
+
+/**
+ * GameScreenModel - Manages game state
+ */
+export class GameScreenModel {
+	private score = 0;
+
+	/**
+	 * Reset game state for a new game
+	 */
+	reset(): void {
+		this.score = 0;
+	}
+
+	/**
+	 * Increment score when lemon is clicked
+	 */
+	incrementScore(): void {
+		this.score++;
+	}
+
+	/**
+	 * Get current score
+	 */
+	getScore(): number {
+		return this.score;
+	}
+}

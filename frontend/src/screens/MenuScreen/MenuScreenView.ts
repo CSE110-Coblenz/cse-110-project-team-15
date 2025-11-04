@@ -15,11 +15,11 @@ export class MenuScreenView implements View {
 		const title = new Konva.Text({
 			x: STAGE_WIDTH / 2,
 			y: 150,
-			text: "LEMON CLICKER",
-			fontSize: 48,
-			fontFamily: "Arial",
-			fill: "yellow",
-			stroke: "orange",
+			text: "Manner's Murder: An Algebraic Mystery",
+			fontSize: 45,
+			fontFamily: "serif",
+			fill: "darkred",
+			stroke: "maroon",
 			strokeWidth: 2,
 			align: "center",
 		});
@@ -33,17 +33,17 @@ export class MenuScreenView implements View {
 			y: 300,
 			width: 200,
 			height: 60,
-			fill: "green",
+			fill: "darkred",
 			cornerRadius: 10,
-			stroke: "darkgreen",
+			stroke: "maroon",
 			strokeWidth: 3,
 		});
 		const startText = new Konva.Text({
 			x: STAGE_WIDTH / 2,
 			y: 315,
-			text: "START GAME",
+			text: "Start Game",
 			fontSize: 24,
-			fontFamily: "Arial",
+			fontFamily: "serif",
 			fill: "white",
 			align: "center",
 		});
