@@ -27,6 +27,6 @@
     "noUncheckedSideEffectImports": true
   },
   "include": [
-    "src"
-  ]
+    "src",
+    "frontend/src/screens"  ]
 }

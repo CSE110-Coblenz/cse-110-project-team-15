@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
+import { STAGE_WIDTH, STAGE_HEIGHT } from "../../../src/constants.ts";
 
 export class NotebookView {
     // Notebook elements
