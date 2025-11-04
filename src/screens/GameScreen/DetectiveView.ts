@@ -4,6 +4,7 @@ import { STAGE_WIDTH, STAGE_HEIGHT, SPEED} from "../../constants.ts";
 export class DetectiveView {
     private sprite: Konva.Image | null = null;
     private group: Konva.Group;
+    private speed = SPEED;
     private keysPressed: Set<string> = new Set();
 
     constructor(group: Konva.Group) {
@@ -22,13 +23,34 @@ export class DetectiveView {
         });  
     }
 
-    // Function to move around the sprite
+    // Method to move around the sprite
     private updatePosition(): void {
         if (!this.sprite) return;
 
+        let dx = 0;
+        let dy = 0;
+
+        if (this.keysPressed.has("w")) {
+            dy += this.speed;
+        }
+        if (this.keysPressed.has("s")) {
+            dy -= this.speed;
+        }
+        if (this.keysPressed.has("a")) {
+            dx -= this.speed;
+        }
+        if (this.keysPressed.has("d")) {
+            dx += this.speed;
+        }
+
+        if (dx != 0 || dy != 0) {
+            this.sprite.x(this.sprite.x() + dx);
+            this.sprite.y(this.sprite.y() + dy);
+            this.keepInBounds(this.sprite);
+        }
     }
 
-    // Function to keep the sprite within the bounds of the screen
+    // Method to keep the sprite within the bounds of the screen
     private keepInBounds(image: Konva.Image): void {
 		const x = Math.max(0, Math.min(STAGE_WIDTH - image.width(), image.x()));
 		const y = Math.max(0, Math.min(STAGE_HEIGHT - image.height(), image.y()));
