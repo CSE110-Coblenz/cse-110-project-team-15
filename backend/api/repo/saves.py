@@ -1,5 +1,5 @@
 from typing import Dict
-from schemas.save import SaveState, Location, Npc
+from api.models.save import SaveState, Location, Npc
 
 # In-memory store keyed by username
 _STORE: Dict[str, SaveState] = {}
