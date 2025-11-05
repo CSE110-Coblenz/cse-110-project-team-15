@@ -21,6 +21,20 @@ export class DetectiveView {
             this.group.add(image);
             this.group.getLayer()?.draw();
         });  
+
+        window.addEventListener(
+            "keydown", (e) => this.keysPressed.add(e.key.toLowerCase())
+        );
+
+        window.addEventListener(
+            "keyup", (e) => this.keysPressed.delete(e.key.toLowerCase())
+        );
+
+        // Start an animation loop for the sprite movement
+        const animation = new Konva.Animation(
+            () => this.updatePosition(), this.group.getLayer()
+        );
+        animation.start();
     }
 
     // Method to move around the sprite
@@ -31,10 +45,10 @@ export class DetectiveView {
         let dy = 0;
 
         if (this.keysPressed.has("w")) {
-            dy += this.speed;
+            dy -= this.speed;
         }
         if (this.keysPressed.has("s")) {
-            dy -= this.speed;
+            dy += this.speed;
         }
         if (this.keysPressed.has("a")) {
             dx -= this.speed;
