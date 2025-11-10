@@ -1,14 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
-class UserCreate(BaseModel):
-    username: str
-    password: str
+class Credentials(BaseModel):
+    email: str = Field(alias="user", min_length=1)
+    password: str = Field(alias="pass", min_length=1)
 
-class LoginRequest(BaseModel):
-    username: str
-    password: str
+    model_config = ConfigDict(populate_by_name=True)
 
-class LoginResponse(BaseModel):
+class RegisterRequest(Credentials):
+    pass
+
+class LoginRequest(Credentials):
+    pass
+
+class AuthResponse(BaseModel):
     ok: bool
     message: str
 

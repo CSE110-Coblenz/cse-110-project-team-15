@@ -2,8 +2,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
-from routers.ping import ping_router
+from core.database import close_db_pool, init_db_pool
 from routers.users import user_router
+from routers.ping import ping_router
 from routers.data import data_router
 
 app = FastAPI(
@@ -26,6 +27,17 @@ app.add_middleware(
 app.include_router(ping_router)
 app.include_router(user_router)
 app.include_router(data_router)
+
+
+@app.on_event("startup")
+async def on_startup() -> None:
+    await init_db_pool()
+
+
+@app.on_event("shutdown")
+async def on_shutdown() -> None:
+    await close_db_pool()
+
 
 @app.get("/")
 async def root():
