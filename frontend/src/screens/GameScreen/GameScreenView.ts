@@ -1,8 +1,8 @@
 import Konva from "konva";
 import type { View } from "../../types.ts";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
-import { DetectiveView } from "./DetectiveView.ts";
-import { NotebookView } from "./NotebookView.ts";
+import { DetectiveView } from "../DetectiveScreen/DetectiveView.ts";
+import { NotebookView } from "../NotebookScreen/NotebookView.ts";
 
 /**
  * GameScreenView - Renders the game UI using Konva
