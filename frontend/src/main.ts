@@ -79,7 +79,9 @@ class App implements ScreenSwitcher {
 				// Start the game (which also shows the game screen)
 				this.gameController.startGame();
 				break;
-
+			case "pause":
+				this.pauseController.show();
+				break;
 		}
 	}
 }

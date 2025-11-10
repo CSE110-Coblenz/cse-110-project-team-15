@@ -12,7 +12,14 @@ export class PauseScreenController extends ScreenController {
     constructor(screenSwitcher: ScreenSwitcher) {
             super();
             this.screenSwitcher = screenSwitcher;
-            this.view = new PauseScreenView();
+            this.view = new PauseScreenView(() => this.handleContinueClick());
+    }
+
+    /**
+	 * Handle continue game button click
+	 */
+    private handleContinueClick(): void {
+        this.screenSwitcher.switchToScreen({type: "game"});
     }
 
     /**
