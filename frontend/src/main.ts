@@ -2,7 +2,7 @@ import Konva from "konva";
 import type { ScreenSwitcher, Screen } from "./types.ts";
 import { MenuScreenController } from "./screens/MenuScreen/MenuScreenController.ts";
 import { GameScreenController } from "./screens/GameScreen/GameScreenController.ts";
-import {PauseScreenController} from "./screens/PauseScreen/PauseScreenController.ts";
+import { PauseScreenController } from "./screens/PauseScreen/PauseScreenController.ts";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "./constants.ts";
 
 /**
