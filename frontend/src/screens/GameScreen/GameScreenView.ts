@@ -11,9 +11,11 @@ export class GameScreenView implements View {
 	private group: Konva.Group;
 	private detective: DetectiveView;
 	private notebook: NotebookView;
+	private onPauseClick: () => void;
 
-	constructor() {
+	constructor(onPauseClick: () => void) {
 		this.group = new Konva.Group({ visible: false });
+		this.onPauseClick = onPauseClick;
 
 		// Background
 		const bg = new Konva.Rect({
@@ -37,6 +39,33 @@ export class GameScreenView implements View {
 		});
 		titleText.offsetX(titleText.width() / 2);
 		this.group.add(titleText);
+
+		// Pause button
+		const pauseButton = new Konva.Rect({
+			x: STAGE_WIDTH - 100,
+			y: 20,
+			width: 80,
+			height: 40,
+			fill: "darkred",
+			cornerRadius: 8,
+			stroke: "maroon",
+			strokeWidth: 2,
+		});
+		const pauseText = new Konva.Text({
+			x: STAGE_WIDTH - 60,
+			y: 30,
+			text: "Pause",
+			fontSize: 18,
+			fontFamily: "serif",
+			fill: "white",
+		});
+		pauseText.offsetX(pauseText.width() / 2);
+
+		const pauseGroup = new Konva.Group();
+		pauseGroup.add(pauseButton);
+		pauseGroup.add(pauseText);
+		pauseGroup.on("click", this.onPauseClick);
+		this.group.add(pauseGroup);
 
 		this.detective = new DetectiveView(this.group);
 		this.notebook = new NotebookView(this.group);

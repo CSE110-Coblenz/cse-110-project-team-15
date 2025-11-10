@@ -13,7 +13,56 @@ export class PauseScreenView implements View {
             this.group = new Konva.Group({ visible: false });
             this.onContinueClick = onContinueClick;
 
-            
+            // Background
+            const bg = new Konva.Rect({
+                x: 0,
+                y: 0,
+                width: STAGE_WIDTH,
+                height: STAGE_HEIGHT,
+                fill: "#fffbea",
+            });
+            this.group.add(bg);
+
+            // "Paused" text
+            const pausedText = new Konva.Text({
+                x: STAGE_WIDTH / 2,
+                y: STAGE_HEIGHT / 2 - 100,
+                text: "Game Paused",
+                fontSize: 50,
+                fontFamily: "serif",
+                fill: "darkRed",
+                align: "center",
+            });
+            pausedText.offsetX(pausedText.width() / 2);
+            this.group.add(pausedText);
+
+            // Continue button
+            const continueButton = new Konva.Rect({
+                x: STAGE_WIDTH / 2 - 100,
+                y: STAGE_HEIGHT / 2,
+                width: 200,
+                height: 60,
+                fill: "darkred",
+                cornerRadius: 10,
+                stroke: "maroon",
+                strokeWidth: 3,
+            });
+            const continueText = new Konva.Text({
+                x: STAGE_WIDTH / 2,
+                y: STAGE_HEIGHT / 2 + 15,
+                text: "Continue Game",
+                fontSize: 26,
+                fontFamily: "serif",
+                fill: "white",
+                align: "center",
+            });
+            continueText.offsetX(continueText.width() / 2);
+
+            const continueGroup = new Konva.Group();
+            continueGroup.add(continueButton);
+            continueGroup.add(continueText);
+            continueGroup.on("click", this.onContinueClick);
+            this.group.add(continueGroup);
     }
     
     /**
