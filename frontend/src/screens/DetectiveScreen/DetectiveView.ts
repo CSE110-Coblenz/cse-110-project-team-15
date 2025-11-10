@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { STAGE_WIDTH, STAGE_HEIGHT, SPEED} from "../../../src/constants.ts";
+import { STAGE_WIDTH, STAGE_HEIGHT, SPEED} from "../../constants.ts";
 
 export class DetectiveView {
     private sprite: Konva.Image | null = null;
