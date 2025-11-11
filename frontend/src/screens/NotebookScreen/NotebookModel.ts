@@ -1,7 +1,7 @@
 export class NotebookModel {
     private clues: string[] = [];
     private hints: string[] = [];
-    private equations: string[] = [];
+    private lessons: string[] = [];
     private activeTab: string = "Clues";
 
     /*
@@ -40,9 +40,9 @@ export class NotebookModel {
             }
         }
         
-        if (this.activeTab == "Lessons Learned") {
-            if (this.equations.length > 0) {
-                return this.equations.join("\n");
+        if (this.activeTab == "Lessons") {
+            if (this.lessons.length > 0) {
+                return this.lessons.join("\n");
             }
             else {
                 return "No lessons learned yet.";
@@ -70,7 +70,7 @@ export class NotebookModel {
      * Add a lesson learned to the notebook
      */
     addLessonLearned(lessonLearned: string): void {
-        this.equations.push(lessonLearned);
+        this.lessons.push(lessonLearned);
     }
 
 } 

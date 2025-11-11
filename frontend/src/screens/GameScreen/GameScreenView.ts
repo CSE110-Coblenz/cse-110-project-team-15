@@ -2,7 +2,7 @@ import Konva from "konva";
 import type { View } from "../../types.ts";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
 import { DetectiveView } from "../DetectiveScreen/DetectiveView.ts";
-import { NotebookView } from "../NotebookScreen/NotebookView.ts";
+import { NotebookController } from "../NotebookScreen/NotebookController.ts";
 
 /**
  * GameScreenView - Renders the game UI using Konva
@@ -10,7 +10,7 @@ import { NotebookView } from "../NotebookScreen/NotebookView.ts";
 export class GameScreenView implements View {
 	private group: Konva.Group;
 	private detective: DetectiveView;
-	private notebook: NotebookView;
+	private notebook: NotebookController;
 	private onPauseClick: () => void;
 
 	constructor(onPauseClick: () => void) {
@@ -68,7 +68,7 @@ export class GameScreenView implements View {
 		this.group.add(pauseGroup);
 
 		this.detective = new DetectiveView(this.group);
-		this.notebook = new NotebookView(this.group);
+		this.notebook = new NotebookController(this.group);
 	}
 
 	/**
