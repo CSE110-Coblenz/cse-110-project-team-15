@@ -7,12 +7,18 @@ export class NotebookView {
     private group: Konva.Group;
     private parentGroup: Konva.Group;
     private pageText: Konva.Text;
-    private activeTab = "Clues";
+    private onTabClick: (tab: string) => void;
+    private onToggle: () => void;
 
-    constructor(parentGroup: Konva.Group) {
+    constructor(
+        parentGroup: Konva.Group,
+        onTabClick: (tab: string) => void,
+        onToggle: () => void
+    ) {
+         // Notebook overlay group
         this.parentGroup = parentGroup;
-
-        // Notebook overlay group
+        this.onTabClick = onTabClick;
+        this.onToggle = onToggle;
         this.group = new Konva.Group({visible: false});
         this.parentGroup.add(this.group);
 
@@ -22,7 +28,7 @@ export class NotebookView {
             image.height(80);
             image.x(STAGE_WIDTH / 2 - 380);
             image.y(STAGE_HEIGHT - 80);
-            image.on("click", () => this.toggleNotebook());
+            image.on("click", () => this.onToggle());
             this.icon = image;
             this.parentGroup.add(image);
             this.parentGroup.getLayer()?.draw();
@@ -45,7 +51,7 @@ export class NotebookView {
         this.group.add(notebookBg);
             
         // Tabs for notebook
-        const tabs = ["Clues", "Hints", "Equations"];
+        const tabs = ["Clues", "Hints", "Lessons"];
         tabs.forEach((tab, i) => {
             const tabRect = new Konva.Rect({
                 x: 130 + i * 120,
@@ -56,8 +62,7 @@ export class NotebookView {
                 stroke: "#8b5a2b",
                 strokeWidth: 2,
                 cornerRadius: 5,
-            });
-                
+            });  
             const tabText = new Konva.Text({
                 x: tabRect.x() + 10,
                 y: tabRect.y() + 8,
@@ -67,8 +72,8 @@ export class NotebookView {
                 fill: "black",
             });
             
-            tabRect.on("click", () => this.switchTab(tab));
-            tabText.on("click", () => this.switchTab(tab));
+            tabRect.on("click", () => this.onTabClick(tab));
+            tabText.on("click", () => this.onTabClick(tab));
 
             this.group.add(tabRect);
             this.group.add(tabText);
@@ -96,30 +101,21 @@ export class NotebookView {
             fill: "darkred",
             fontFamily: "serif",
         });
-        closeButton.on("click", () => this.toggleNotebook());
+        closeButton.on("click", () => this.onToggle());
         this.group.add(closeButton);
     }
- 
-    toggleNotebook(): void {
-        this.group.visible(!this.group.visible());
+
+    updatePage(content: string): void {
+        this.pageText.text(content);
         this.parentGroup.getLayer()?.draw();
     }
 
-    private switchTab(tab: string): void {
-        this.activeTab = tab;
-        let text = "";
-        switch (tab) {
-        case "Clues":
-            text = "Clues\n\n- No clues yet.";
-            break;
-        case "Hints":
-            text = "Hints\n\n- Try exploring the mansion.";
-            break;
-        case "Equations":
-            text = "Equations\n\n- y = mx + b\n- ax² + bx + c = 0";
-            break;
+    setVisible(visible: boolean): void {
+        this.group.visible(visible);
+        this.parentGroup.getLayer()?.draw();
     }
-    this.pageText.text(text);
-    this.parentGroup.getLayer()?.draw();
-  }
+
+    isVisible(): boolean {
+        return this.group.visible();
+    }
 }

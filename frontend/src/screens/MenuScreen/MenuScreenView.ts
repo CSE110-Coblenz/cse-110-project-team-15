@@ -27,7 +27,7 @@ export class MenuScreenView implements View {
 		title.offsetX(title.width() / 2);
 		this.group.add(title);
 
-		const startButtonGroup = new Konva.Group();
+		// Start button
 		const startButton = new Konva.Rect({
 			x: STAGE_WIDTH / 2 - 100,
 			y: 300,
@@ -48,6 +48,8 @@ export class MenuScreenView implements View {
 			align: "center",
 		});
 		startText.offsetX(startText.width() / 2);
+
+		const startButtonGroup = new Konva.Group();
 		startButtonGroup.add(startButton);
 		startButtonGroup.add(startText);
 		startButtonGroup.on("click", onStartClick);
