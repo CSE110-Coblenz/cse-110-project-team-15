@@ -1,10 +1,17 @@
 # backend/api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from core.config import settings
-from routers.ping import ping_router
-from routers.users import user_router
-from routers.data import data_router
+from api.core.config import settings
+
+from api.routers.health import health_router
+from api.routers.data import data_router
+from api.routers.users import user_router
+# from api.routers.register import ...
+# from api.routers.login import  ...
+# from api.routers.delete import ...
+# from api.routers.sync import   ...
+from api.routers.update import game_update_router
+from api.routers.save import game_save_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -23,7 +30,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(ping_router)
+app.include_router(health_router)
 app.include_router(user_router)
 app.include_router(data_router)
 
