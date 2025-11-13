@@ -19,7 +19,7 @@ class BlackScene extends Phaser.Scene{
 }
 export class GameScreenView implements View {
 	private group: Konva.Group;
-	private notebook: NotebookController;
+	private notebook!: NotebookController;
 	private onPauseClick: () => void;
 
 	//Hold a reference to the Phaser game & its container
@@ -121,7 +121,6 @@ export class GameScreenView implements View {
 				this.phaserContainer.style.display = visible ? "none" : "block";
 			});
 		}
-		
 
 		// this.notebook = new NotebookController(this.group);
 	}
