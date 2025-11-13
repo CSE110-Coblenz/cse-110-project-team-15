@@ -1,17 +1,31 @@
 import Konva from "konva";
+import Phaser from "phaser";
 import type { View } from "../../types.ts";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
-import { DetectiveView } from "../DetectiveScreen/DetectiveView.ts";
 import { NotebookController } from "../NotebookScreen/NotebookController.ts";
 
 /**
- * GameScreenView - Renders the game UI using Konva
+ * GameScreenView - Renders the game UI using Konva and Phaser3
  */
+
+class BlackScene extends Phaser.Scene{
+	constructor(){
+		super("BlackScene");
+	}
+
+	create(){
+		this.cameras.main.setBackgroundColor("#2ab121ff");
+	}
+}
 export class GameScreenView implements View {
 	private group: Konva.Group;
-	private detective: DetectiveView;
 	private notebook: NotebookController;
 	private onPauseClick: () => void;
+
+	//Hold a reference to the Phaser game & its container
+	private phaserGame?: Phaser.Game;
+	private phaserContainer?: HTMLDivElement;
+
 
 	constructor(onPauseClick: () => void) {
 		this.group = new Konva.Group({ visible: false });
@@ -37,6 +51,9 @@ export class GameScreenView implements View {
 			fill: "darkRed",
 			align: "center",
 		});
+
+		//in-gameview
+
 		titleText.offsetX(titleText.width() / 2);
 		this.group.add(titleText);
 
@@ -67,7 +84,38 @@ export class GameScreenView implements View {
 		pauseGroup.on("click", this.onPauseClick);
 		this.group.add(pauseGroup);
 
-		this.detective = new DetectiveView(this.group);
+		//Find the root container that Konva is using
+		const root = document.getElementById("container")
+
+		if(root){
+			//create a div for phaser
+			const phaserDiv = document.createElement("div");
+			phaserDiv.id = "phaser-container";
+			document.body.appendChild(phaserDiv); 
+			// phaserDiv.style.position = "absolute";
+			// phaserDiv.style.left = "500px";
+			// phaserDiv.style.top = "100px"; 
+			// phaserDiv.style.width = "600px";
+			// phaserDiv.style.height ="450px";
+			// root.appendChild(phaserDiv);
+			// this.phaserContainer = phaserDiv;
+
+			this.phaserContainer = phaserDiv;
+
+			//phaser window setup
+			this.phaserGame = new Phaser.Game({
+				type: Phaser.AUTO,
+				width: 600,
+				height:450,
+				parent: phaserDiv,
+				scene: [BlackScene],
+				physics:{
+					default: "arcade",
+					arcade: {debug: false},
+				},
+			});
+		}
+
 		this.notebook = new NotebookController(this.group);
 	}
 
@@ -77,6 +125,10 @@ export class GameScreenView implements View {
 	show(): void {
 		this.group.visible(true);
 		this.group.getLayer()?.draw();
+
+		if (this.phaserContainer){
+			this.phaserContainer.style.display = "block";
+		}
 	}
 
 	/**
@@ -85,6 +137,10 @@ export class GameScreenView implements View {
 	hide(): void {
 		this.group.visible(false);
 		this.group.getLayer()?.draw();
+
+		if (this.phaserContainer){
+			this.phaserContainer.style.display = "none";
+		}
 	}
 
 	getGroup(): Konva.Group {
