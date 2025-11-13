@@ -93,13 +93,6 @@ export class GameScreenView implements View {
 			phaserDiv.id = "phaser-container";
 			phaserDiv.style.display = "none";
 			document.body.appendChild(phaserDiv); 
-			// phaserDiv.style.position = "absolute";
-			// phaserDiv.style.left = "500px";
-			// phaserDiv.style.top = "100px"; 
-			// phaserDiv.style.width = "600px";
-			// phaserDiv.style.height ="450px";
-			// root.appendChild(phaserDiv);
-			// this.phaserContainer = phaserDiv;
 
 			this.phaserContainer = phaserDiv;
 
@@ -115,9 +108,22 @@ export class GameScreenView implements View {
 					arcade: {debug: false},
 				},
 			});
-		}
 
-		this.notebook = new NotebookController(this.group);
+			//notebook setup
+			this.notebook = new NotebookController(this.group);
+
+			//hook notebook visivility -> phaser visibility
+			this.notebook.onVisibilityChange((visible) => {
+				if(!this.phaserContainer) return;
+
+				//when notebook is visible, hide phaser
+				//When notebook closes, show phaser again
+				this.phaserContainer.style.display = visible ? "none" : "block";
+			});
+		}
+		
+
+		// this.notebook = new NotebookController(this.group);
 	}
 
 	/**
