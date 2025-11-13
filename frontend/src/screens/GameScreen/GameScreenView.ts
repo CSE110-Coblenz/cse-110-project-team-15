@@ -23,8 +23,8 @@ export class GameScreenView implements View {
 	private onPauseClick: () => void;
 
 	//Hold a reference to the Phaser game & its container
-	private phaserGame?: Phaser.Game;
-	private phaserContainer?: HTMLDivElement;
+	private phaserGame?: Phaser.Game | null = null;
+	private phaserContainer?: HTMLDivElement | null = null;
 
 
 	constructor(onPauseClick: () => void) {
@@ -91,6 +91,7 @@ export class GameScreenView implements View {
 			//create a div for phaser
 			const phaserDiv = document.createElement("div");
 			phaserDiv.id = "phaser-container";
+			phaserDiv.style.display = "none";
 			document.body.appendChild(phaserDiv); 
 			// phaserDiv.style.position = "absolute";
 			// phaserDiv.style.left = "500px";
