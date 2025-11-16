@@ -1,7 +1,8 @@
 # backend/api/routers/data.py
 from fastapi import APIRouter
-from api.models.save import SyncResponse, SaveRequest, OkResponse
-from api.models.update import UpdateEvent
+
+from models.save import SyncResponse, SaveRequest, OkResponse
+from models.update import UpdateEvent
 from repo.saves import get_save, upsert_save, apply_update
 
 data_router = APIRouter(tags=["data"])

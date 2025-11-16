@@ -1,7 +1,7 @@
 # backend/api/routers/ping.py
 
 from fastapi import APIRouter
-from api.models.save import OkResponse
+from models.save import OkResponse
 
 ping_router = APIRouter(tags=["ping"])
 
