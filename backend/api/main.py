@@ -3,15 +3,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.core.config import settings
 
-from api.routers.health import health_router
-from api.routers.data import data_router
-from api.routers.users import user_router
+from routers.health import health_router
+from routers.data import data_router
+from routers.users import user_router
 # from api.routers.register import ...
 # from api.routers.login import  ...
 # from api.routers.delete import ...
 # from api.routers.sync import   ...
-from api.routers.update import game_update_router
-from api.routers.save import game_save_router
+from routers.update import game_update_router
+from routers.save import game_save_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
