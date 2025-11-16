@@ -33,6 +33,8 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(user_router)
 app.include_router(data_router)
+app.include_router(game_update_router)
+app.include_router(game_save_router)
 
 @app.get("/")
 async def root():
