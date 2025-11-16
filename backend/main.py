@@ -1,9 +1,16 @@
 # backend/api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+<<<<<<< HEAD:backend/api/main.py
 from api.core.config import settings
 
 from routers.health import health_router
+=======
+from core.config import settings
+from core.database import close_db_pool, init_db_pool
+from routers.users import user_router
+from routers.ping import ping_router
+>>>>>>> origin/backend:backend/main.py
 from routers.data import data_router
 from routers.users import user_router
 # from api.routers.register import ...
@@ -35,6 +42,17 @@ app.include_router(user_router)
 app.include_router(data_router)
 app.include_router(game_update_router)
 app.include_router(game_save_router)
+
+
+@app.on_event("startup")
+async def on_startup() -> None:
+    await init_db_pool()
+
+
+@app.on_event("shutdown")
+async def on_shutdown() -> None:
+    await close_db_pool()
+
 
 @app.get("/")
 async def root():
