@@ -441,7 +441,7 @@
          "name":"Foreground",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":80,
          "x":0,
          "y":0
@@ -508,7 +508,7 @@
                  "value":true
                 }],
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":80,
          "x":0,
          "y":0
@@ -936,7 +936,7 @@
                                          "name":"doorType",
                                          "propertytype":"doorType",
                                          "type":"string",
-                                         "value":"LOCK"
+                                         "value":"OPEN_ENTRANCE"
                                         }, 
                                         {
                                          "name":"id",
@@ -1093,7 +1093,7 @@
                                          "name":"doorType",
                                          "propertytype":"doorType",
                                          "type":"string",
-                                         "value":"LOCK"
+                                         "value":"OPEN"
                                         }, 
                                         {
                                          "name":"id",
@@ -1204,7 +1204,6 @@
                  "x":0,
                  "y":0
                 }],
-         "locked":true,
          "name":"Rooms",
          "opacity":1,
          "type":"group",

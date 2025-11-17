@@ -21,7 +21,7 @@ export class MainScene extends Phaser.Scene {
 
         this.load.tilemapTiledJSON("map", "/assets/map.json");
     }
- //
+ //.
     create(): void {
         const map = this.make.tilemap({ key: "map" });
 
@@ -56,17 +56,15 @@ export class MainScene extends Phaser.Scene {
         this.player.setDepth(10);
 
         const body = this.player.body as Phaser.Physics.Arcade.Body;
-        const hitWidth = 12;   
-        const hitHeight = 18;  
+        const hitWidth = 8;   
+        const hitHeight = 15;  
 
         body.setSize(hitWidth, hitHeight);
         this.player.setScale(2.0)
-
-        // center horizontally
+        
         const offsetX = (this.player.width - hitWidth) / 2;
 
-        // stick to bottom, then move up a bit
-        const offsetY = 30; // 4px above bottom
+        const offsetY = 34; 
 
         body.setOffset(offsetX, offsetY);
 
