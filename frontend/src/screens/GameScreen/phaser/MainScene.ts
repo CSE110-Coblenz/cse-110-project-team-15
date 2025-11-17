@@ -9,32 +9,25 @@ export class MainScene extends Phaser.Scene {
     }
 
     preload(): void {
-        // 1) Player spritesheet
-        //    File: public/assets/walk.png  → URL: /assets/walk.png
+
         this.load.spritesheet("player", "/assets/walk.png", {
             frameWidth: 80,
             frameHeight: 80,
         });
 
-        // 2) Tileset image
-        //    File: public/assets/mansion-tileset.png → URL: /assets/mansion-tileset.png
+
         this.load.image("tiles", "/assets/mansion-tileset.png");
 
-        // 3) Tilemap JSON
-        //    File: public/assets/map.json → URL: /assets/map.json
+
         this.load.tilemapTiledJSON("map", "/assets/map.json");
     }
-
+ //
     create(): void {
-        // ----- TILEMAP -----
         const map = this.make.tilemap({ key: "map" });
 
-        // Log layer names so you can see what exists
+        // Log layer names so we can see what exists
         console.log("Tile layers:", map.getTileLayerNames());
 
-        // IMPORTANT:
-        // First arg MUST be the tileset name as shown in Tiled’s Tilesets panel.
-        // Change "main" here to whatever your tileset is actually called.
         const tileset = map.addTilesetImage("main", "tiles");
         
         if (!tileset) {
@@ -45,28 +38,45 @@ export class MainScene extends Phaser.Scene {
         }
 
 
-        // Take the FIRST tile layer from the map and just draw that.
-        // This avoids issues with wrong layer names temporarily.
-        const tileLayerNames = map.getTileLayerNames();
-        if (tileLayerNames.length === 0) {
-            console.error("No tile layers found in map.json");
-        } else {
-            const firstLayerName = tileLayerNames[0];
-            console.log("Using tile layer:", firstLayerName);
-            map.createLayer(firstLayerName, tileset, 0, 0);
-        }
+        const bgBase      = map.createLayer("Background/Background", tileset, 0, 0);
+        const wallOvl     = map.createLayer("Background/Wall Overlay", tileset, 0, 0);
+        const floorOvl    = map.createLayer("Background/Floor Overlay", tileset, 0, 0);
+        const furnBack    = map.createLayer("Background/Furniture Back", tileset, 0, 0);
+        const furnFront   = map.createLayer("Background/Furniture Front", tileset, 0, 0);
+        const front       = map.createLayer("Background/Front", tileset, 0, 0);
+
+        const foreground  = map.createLayer("Foreground", tileset, 0, 0);
+        const collision   = map.createLayer("Player Collision", tileset, 0, 0);
+        collision!.setVisible(false);
+        collision!.setCollisionByExclusion([-1]);
 
         // ----- PLAYER -----
-        this.player = this.physics.add.sprite(100, 100, "player", 0);
-        this.player.setCollideWorldBounds(true);
+        this.player = this.physics.add.sprite(200, 200, "player", 0);
+
         this.player.setDepth(10);
 
         const body = this.player.body as Phaser.Physics.Arcade.Body;
-        body.setSize(36, 22, true);
-        body.setOffset(22, 58);
+        const hitWidth = 12;   
+        const hitHeight = 18;  
+
+        body.setSize(hitWidth, hitHeight);
+        this.player.setScale(2.0)
+
+        // center horizontally
+        const offsetX = (this.player.width - hitWidth) / 2;
+
+        // stick to bottom, then move up a bit
+        const offsetY = 30; // 4px above bottom
+
+        body.setOffset(offsetX, offsetY);
+
 
         // Simple camera follow
         this.cameras.main.startFollow(this.player);
+
+        // PHYSICS COLLISION
+        this.physics.add.collider(this.player, collision!);
+
 
         // ----- BASIC WALK ANIMS -----
         this.anims.create({

@@ -106,7 +106,10 @@ export class GameScreenView implements View {
 				scene: [MainScene],
 				physics:{
 					default: "arcade",
-					arcade: {debug: false},
+					arcade: {
+						debug: true,
+						gravity: {x:0, y:0}
+					},
 				},
 			});
 
