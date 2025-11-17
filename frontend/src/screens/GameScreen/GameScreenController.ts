@@ -2,6 +2,7 @@ import { ScreenController } from "../../types.ts";
 import type { ScreenSwitcher } from "../../types.ts";
 import { GameScreenView } from "./GameScreenView.ts";
 
+
 /**
  * GameScreenController - Coordinates game logic between Model and View
  */
