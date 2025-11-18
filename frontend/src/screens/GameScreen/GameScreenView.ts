@@ -3,28 +3,29 @@ import Phaser from "phaser";
 import type { View } from "../../types.ts";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
 import { NotebookController } from "../NotebookScreen/NotebookController.ts";
+import { MainScene } from "./phaser/MainScene.ts";
 
 /**
  * GameScreenView - Renders the game UI using Konva and Phaser3
  */
 
-class BlackScene extends Phaser.Scene{
-	constructor(){
-		super("BlackScene");
-	}
+// class BlackScene extends Phaser.Scene{
+// 	constructor(){
+// 		super("BlackScene");
+// 	}
 
-	create(){
-		this.cameras.main.setBackgroundColor("#2ab121ff");
-	}
-}
+// 	create(){
+// 		this.cameras.main.setBackgroundColor("#2ab121ff");
+// 	}
+// }
 export class GameScreenView implements View {
 	private group: Konva.Group;
 	private notebook!: NotebookController;
 	private onPauseClick: () => void;
 
 	//Hold a reference to the Phaser game & its container
-	private phaserGame?: Phaser.Game | null = null;
-	private phaserContainer?: HTMLDivElement | null = null;
+	private phaserGame!: Phaser.Game;
+	private phaserContainer?: HTMLDivElement;
 
 
 	constructor(onPauseClick: () => void) {
@@ -102,10 +103,13 @@ export class GameScreenView implements View {
 				width: 600,
 				height:450,
 				parent: phaserDiv,
-				scene: [BlackScene],
+				scene: [MainScene],
 				physics:{
 					default: "arcade",
-					arcade: {debug: false},
+					arcade: {
+						debug: true,
+						gravity: {x:0, y:0}
+					},
 				},
 			});
 
@@ -114,11 +118,13 @@ export class GameScreenView implements View {
 
 			//hook notebook visivility -> phaser visibility
 			this.notebook.onVisibilityChange((visible) => {
-				if(!this.phaserContainer) return;
-
-				//when notebook is visible, hide phaser
-				//When notebook closes, show phaser again
-				this.phaserContainer.style.display = visible ? "none" : "block";
+				if(visible){
+					this.phaserContainer!.style.display = "none";
+					this.phaserGame!.scene.pause("MainScene");
+				}else{
+					this.phaserContainer!.style.display = "block";
+					this.phaserGame!.scene.resume("MainScene");
+				}
 			});
 		}
 
