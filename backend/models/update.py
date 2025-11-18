@@ -1,9 +1,9 @@
-from typing import Any, Literal, Optional
+# models/update.py
 from pydantic import BaseModel
-
-UpdateType = Literal["problem", "minigame", "location"]
+from typing import Optional, Dict, Any, Literal
 
 class UpdateEvent(BaseModel):
-    type: UpdateType
+    type: Literal["problem","minigame","location","notebook","access","npc"]
     id: Optional[str] = None
-    msg: Optional[Any] = None
+    msg: Optional[Dict[str, Any]] = None   
+    value: Optional[Dict[str, Any]] = None
