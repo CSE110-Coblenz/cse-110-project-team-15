@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from api.models.save import OkResponse, SaveRequest
-from api.repo.saves import upsert_save
+from models.save import OkResponse, SaveRequest
+from repo.saves import upsert_save
 
 game_save_router = APIRouter(tags=["game"])
 USERNAME = "demo"

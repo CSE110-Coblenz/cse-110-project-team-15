@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from api.models.save import OkResponse
-from api.models.update import UpdateEvent
-from api.repo.saves import apply_update
+from models.save import OkResponse
+from models.update import UpdateEvent
+from repo.saves import apply_update
 
 game_update_router = APIRouter(tags=["game"])
 USERNAME = "demo"
