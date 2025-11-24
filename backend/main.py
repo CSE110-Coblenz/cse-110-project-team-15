@@ -1,16 +1,10 @@
 # backend/api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-<<<<<<< HEAD:backend/api/main.py
-from api.core.config import settings
-
-from routers.health import health_router
-=======
 from core.config import settings
 from core.database import close_db_pool, init_db_pool
 from routers.users import user_router
-from routers.ping import ping_router
->>>>>>> origin/backend:backend/main.py
+from routers.health import health_router
 from routers.data import data_router
 from routers.users import user_router
 # from api.routers.register import ...
