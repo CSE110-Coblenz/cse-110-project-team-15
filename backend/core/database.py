@@ -44,3 +44,8 @@ async def close_db_pool() -> None:
         await _pool.close()
         _pool = None
 
+async def get_current_user():
+    pass
+
+async def get_session_id():
+    pass
