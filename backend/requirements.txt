@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+pytest==8.3.2
+asyncpg
+passlib[bcrypt]
+pyjwt
+httpx
+testing.postgresql
+psycopg2-binary
+pytest-asyncio
