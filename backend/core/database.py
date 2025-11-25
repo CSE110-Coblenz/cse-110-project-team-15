@@ -1,4 +1,5 @@
 import asyncio
+from collections.abc import AsyncGenerator
 from typing import Optional
 
 import asyncpg  # type: ignore[import]
@@ -28,6 +29,45 @@ async def init_db_pool() -> asyncpg.Pool:
                 )
 
     return _pool
+
+
+async def get_db_connection() -> AsyncGenerator[asyncpg.Connection, None]:
+    """Yield a database connection from the shared pool."""
+    pool = await get_db_pool()
+    async with pool.acquire() as connection:
+        yield connection
+
+
+from fastapi import Cookie, Depends, HTTPException, status
+from core.security import verify_token
+
+async def get_current_user(
+    access_token: str | None = Cookie(default=None),
+    connection: asyncpg.Connection = Depends(get_db_connection),
+) -> int:
+    """Validate the session and return the user ID."""
+    if not access_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    
+    if access_token.startswith("Bearer "):
+        access_token = access_token.split(" ")[1]
+
+    payload = verify_token(access_token)
+    if not payload:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    
+    session_id = payload.get("session_id")
+    if not session_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
+    session = await connection.fetchrow(
+        "SELECT user_id FROM session WHERE session_id = $1 AND time_expire > NOW()",
+        session_id,
+    )
+    if not session:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    
+    return session["user_id"]
 
 
 async def get_db_pool() -> asyncpg.Pool:

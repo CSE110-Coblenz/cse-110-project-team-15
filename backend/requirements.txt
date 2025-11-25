@@ -1,9 +1,11 @@
 fastapi
 uvicorn[standard]
 pydantic-settings
-<<<<<<< HEAD
 pytest==8.3.2
-=======
 asyncpg
 passlib[bcrypt]
->>>>>>> origin/backend
+pyjwt
+httpx
+testing.postgresql
+psycopg2-binary
+pytest-asyncio
