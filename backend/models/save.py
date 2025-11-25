@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional
 
 class Location(BaseModel):
-    room: str = ""
+    room: str = "Start"   # was ""
     x: int = 0
     y: int = 0
 
