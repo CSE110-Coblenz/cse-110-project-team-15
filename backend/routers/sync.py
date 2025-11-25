@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Cookie
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Cookie, HTTPException, status
 
 import asyncpg  # type: ignore[import]
 
@@ -13,7 +12,6 @@ async def handle_data_sync(
     session_id: str = Cookie(None),
     connection: asyncpg.Connection = Depends(get_db_connection)
 ):
-
     if session_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
