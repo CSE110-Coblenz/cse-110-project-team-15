@@ -47,10 +47,14 @@ async def setup_db(db_pool: asyncpg.Pool) -> AsyncGenerator[None, None]:
                 time_expire TIMESTAMP WITH TIME ZONE,
                 PRIMARY KEY (session_id)
             );
+            CREATE TABLE IF NOT EXISTS game_saves (
+                user_id INT PRIMARY KEY,
+                game_data JSONB
+            );
         """)
         yield
         # Clean up data (truncate tables)
-        await connection.execute("TRUNCATE users, session RESTART IDENTITY CASCADE;")
+        await connection.execute("TRUNCATE users, session, game_saves RESTART IDENTITY CASCADE;")
 
 
 @pytest.fixture

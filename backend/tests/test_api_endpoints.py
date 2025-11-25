@@ -1,39 +1,46 @@
 
 from typing import Dict, Any
 import pytest
-from fastapi.testclient import TestClient
+import json
+from httpx import AsyncClient
 from main import app
-from repo import saves as saves_repo
+from core.database import get_current_user, get_db_pool
 
-client = TestClient(app)
+# Mock user ID
+TEST_USER_ID = 1
 
+# Override get_current_user dependency
+async def mock_get_current_user():
+    return TEST_USER_ID
+
+@pytest.fixture(autouse=True)
+def override_auth():
+    app.dependency_overrides[get_current_user] = mock_get_current_user
+    yield
+    # conftest.py clears overrides, but we can be safe
+    if get_current_user in app.dependency_overrides:
+        del app.dependency_overrides[get_current_user]
 
 # ---------- helpers ----------
 
-def reset_store():
-    """Clear in-memory saves so tests don't leak state."""
-    if hasattr(saves_repo, "_STORE"):
-        saves_repo._STORE.clear() 
+async def get_state_from_db(db_pool):
+    async with db_pool.acquire() as connection:
+        row = await connection.fetchrow(
+            "SELECT game_data FROM game_saves WHERE user_id = $1",
+            TEST_USER_ID
+        )
+        if row and row["game_data"]:
+            data = row["game_data"]
+            if isinstance(data, str):
+                return json.loads(data)
+            return data
+        return None
 
+# ---------- tests ----------
 
-def get_state_for(username: str = "demo"):
-    """Convenience accessor for current saved state (bypasses API if /game/sync not present)."""
-    return saves_repo.get_save(username)
-
-
-# ---------- fixtures ----------
-
-@pytest.fixture(autouse=True)
-def _isolate_store():
-    reset_store()
-    yield
-    reset_store()
-
-
-# ---------- health ----------
-
-def test_health_head_ok():
-    r = client.head("/health")
+@pytest.mark.asyncio
+async def test_health_head_ok(client: AsyncClient):
+    r = await client.head("/health")
     assert r.status_code == 200
     # HEAD should not return a body
     assert r.text == ""
@@ -41,100 +48,110 @@ def test_health_head_ok():
 
 # ---------- game/save ----------
 
-def test_game_save_accepts_full_payload_and_persists_defaults():
+@pytest.mark.asyncio
+async def test_game_save_accepts_full_payload_and_persists_defaults(client: AsyncClient, db_pool):
     payload: Dict[str, Any] = {
         "location": {"room": "Start", "x": 0, "y": 0},
         "notebook": {},
         "access": {},
         "npc": [{"id": "npc1"}, {"id": "npc2"}],
     }
-    r = client.post("/game/save", json=payload)
+    r = await client.post("/game/save", json=payload)
     assert r.status_code == 200
     assert r.json() == {"ok": True}
 
-    st = get_state_for()
-    assert st.location.room == "Start"
-    assert st.location.x == 0 and st.location.y == 0
-    assert [n.id for n in st.npc] == ["npc1", "npc2"]
+    st = await get_state_from_db(db_pool)
+    assert st["location"]["room"] == "Start"
+    assert st["location"]["x"] == 0 and st["location"]["y"] == 0
+    assert [n["id"] for n in st["npc"]] == ["npc1", "npc2"]
 
 
-def test_game_save_allows_empty_body_uses_defaults():
-    r = client.post("/game/save", json={})
+@pytest.mark.asyncio
+async def test_game_save_allows_empty_body_uses_defaults(client: AsyncClient, db_pool):
+    # SaveRequest inherits from SaveState which has defaults
+    r = await client.post("/game/save", json={})
     assert r.status_code == 200
 
-    st = get_state_for()
-    assert st.location.room == "Start"
-    assert isinstance(st.notebook, dict)
-    assert isinstance(st.access, dict)
-    assert isinstance(st.npc, list)
+    st = await get_state_from_db(db_pool)
+    assert st["location"]["room"] == "Start"
+    assert isinstance(st["notebook"], dict)
+    assert isinstance(st["access"], dict)
+    assert isinstance(st["npc"], list)
 
 
 # ---------- game/update ----------
 
-def test_game_update_location_updates_room_and_coords():
-    client.post("/game/save", json={})
+@pytest.mark.asyncio
+async def test_game_update_location_updates_room_and_coords(client: AsyncClient, db_pool):
+    # Initialize state
+    await client.post("/game/save", json={})
 
-    r = client.put("/game/update", json={"type": "location", "msg": {"room": "Lab", "x": 3, "y": 4}})
+    r = await client.put("/game/update", json={"type": "location", "msg": {"room": "Lab", "x": 3, "y": 4}})
     assert r.status_code == 200
     assert r.json() == {"ok": True}
 
-    st = get_state_for()
-    assert st.location.room == "Lab"
-    assert st.location.x == 3 and st.location.y == 4
+    st = await get_state_from_db(db_pool)
+    assert st["location"]["room"] == "Lab"
+    assert st["location"]["x"] == 3 and st["location"]["y"] == 4
 
 
-def test_game_update_location_coerces_string_numbers_to_ints():
-    client.post("/game/save", json={})
+@pytest.mark.asyncio
+async def test_game_update_location_coerces_string_numbers_to_ints(client: AsyncClient, db_pool):
+    await client.post("/game/save", json={})
 
-    # msg values as strings; repo.apply_update coerces to int with int(...)
-    r = client.put("/game/update", json={"type": "location", "msg": {"room": "Hall", "x": "9", "y": "10"}})
+    # msg values as strings; update logic coerces to int
+    r = await client.put("/game/update", json={"type": "location", "msg": {"room": "Hall", "x": "9", "y": "10"}})
     assert r.status_code == 200
 
-    st = get_state_for()
-    assert st.location.room == "Hall"
-    assert st.location.x == 9 and st.location.y == 10
+    st = await get_state_from_db(db_pool)
+    assert st["location"]["room"] == "Hall"
+    assert st["location"]["x"] == 9 and st["location"]["y"] == 10
 
 
-def test_game_update_problem_idempotent_completion_log():
-    client.post("/game/save", json={})
+@pytest.mark.asyncio
+async def test_game_update_problem_idempotent_completion_log(client: AsyncClient, db_pool):
+    await client.post("/game/save", json={})
 
     # First mark completion
-    r1 = client.put("/game/update", json={"type": "problem", "id": "p1"})
+    r1 = await client.put("/game/update", json={"type": "problem", "id": "p1"})
     assert r1.status_code == 200
 
     # Repeat same completion should be idempotent (no duplicates)
-    r2 = client.put("/game/update", json={"type": "problem", "id": "p1"})
+    r2 = await client.put("/game/update", json={"type": "problem", "id": "p1"})
     assert r2.status_code == 200
 
-    st = get_state_for()
-    bucket = st.notebook.get("completed_problems", [])
+    st = await get_state_from_db(db_pool)
+    bucket = st["notebook"].get("completed_problems", [])
     assert bucket == ["p1"]
 
 
-def test_game_update_minigame_idempotent_completion_log():
-    client.post("/game/save", json={})
+@pytest.mark.asyncio
+async def test_game_update_minigame_idempotent_completion_log(client: AsyncClient, db_pool):
+    await client.post("/game/save", json={})
 
-    client.put("/game/update", json={"type": "minigame", "id": "m7"})
-    client.put("/game/update", json={"type": "minigame", "id": "m7"})
+    await client.put("/game/update", json={"type": "minigame", "id": "m7"})
+    await client.put("/game/update", json={"type": "minigame", "id": "m7"})
 
-    st = get_state_for()
-    bucket = st.notebook.get("completed_minigames", [])
+    st = await get_state_from_db(db_pool)
+    bucket = st["notebook"].get("completed_minigames", [])
     assert bucket == ["m7"]
 
 
-def test_game_update_rejects_unknown_type():
+@pytest.mark.asyncio
+async def test_game_update_rejects_unknown_type(client: AsyncClient):
     # Literal["problem","minigame","location","notebook","access","npc"]
-    r = client.put("/game/update", json={"type": "teleport", "msg": {"room": "Somewhere"}})
+    r = await client.put("/game/update", json={"type": "teleport", "msg": {"room": "Somewhere"}})
     assert r.status_code == 422  # Pydantic validation error
 
 
 # ---------- game/sync  ----------
 
-def test_game_sync_if_present():
-    r = client.get("/game/sync")
-    if r.status_code == 404:
-        pytest.skip("`/game/sync` not implemented yet")
+@pytest.mark.asyncio
+async def test_game_sync_if_present(client: AsyncClient, db_pool):
+    # Ensure state exists
+    await client.post("/game/save", json={})
 
+    r = await client.get("/game/sync")
     assert r.status_code == 200
     body = r.json()
     assert "location" in body and "notebook" in body and "access" in body and "npc" in body
