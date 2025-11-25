@@ -1,4 +1,6 @@
 // import Phaser from "phaser";
+import { DoorsManager } from "./DoorsManager"; 
+
 
 export class MainScene extends Phaser.Scene {
     private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
@@ -21,9 +23,20 @@ export class MainScene extends Phaser.Scene {
 
         this.load.tilemapTiledJSON("map", "/assets/map.json");
     }
- //.
+ //..
     create(): void {
         const map = this.make.tilemap({ key: "map" });
+        //const doors = new DoorsManager(this, map, this.player);
+
+        // listen for door events
+        // this.events.on("door-entered", (door) => {
+        //     console.log("Entered door:", door);
+
+        //     // Later we can:
+        //     // - Switch rooms
+        //     // - Fade out/in
+        //     // - Move player to new coordinates
+        // });
 
         // Log layer names so we can see what exists
         console.log("Tile layers:", map.getTileLayerNames());
@@ -37,13 +50,28 @@ export class MainScene extends Phaser.Scene {
             return;
         }
 
-
+//
         const bgBase      = map.createLayer("Background/Background", tileset, 0, 0);
         const wallOvl     = map.createLayer("Background/Wall Overlay", tileset, 0, 0);
         const floorOvl    = map.createLayer("Background/Floor Overlay", tileset, 0, 0);
         const furnBack    = map.createLayer("Background/Furniture Back", tileset, 0, 0);
         const furnFront   = map.createLayer("Background/Furniture Front", tileset, 0, 0);
         const front       = map.createLayer("Background/Front", tileset, 0, 0);
+
+
+        // 🔍 NEW unexplored layers
+        const unexplored1 = map.createLayer("Unexplored/Unexplored1", tileset, 0, 0);
+        const unexplored2 = map.createLayer("Unexplored/Unexplored2", tileset, 0, 0);
+        const unexplored3 = map.createLayer("Unexplored/Unexplored3", tileset, 0, 0);
+        const unexplored4 = map.createLayer("Unexplored/Unexplored4", tileset, 0, 0);
+        const unexplored5 = map.createLayer("Unexplored/Unexplored5", tileset, 0, 0);
+
+        // make sure they’re visible first.
+        unexplored1!.setVisible(true);
+        unexplored2!.setVisible(true);
+        unexplored3!.setVisible(true);
+        unexplored4!.setVisible(true);
+        unexplored5!.setVisible(true);
 
         const foreground  = map.createLayer("Foreground", tileset, 0, 0);
         const collision   = map.createLayer("Player Collision", tileset, 0, 0);
