@@ -97,6 +97,18 @@ CREATE TABLE session (
 - `is_active`: Boolean flag for session validity
 - `time_expire`: Expiration timestamp (auto-calculated)
 
+### Game Saves Table
+```sql
+CREATE TABLE game_saves (
+    user_id INT PRIMARY KEY,
+    game_data JSONB
+);
+```
+
+**Fields**:
+- `user_id`: Primary key, foreign key to users.user_id
+- `game_data`: JSONB column storing the entire game state (location, notebook, etc.)
+
 **Note**: The backend does NOT auto-create tables. You must manually create these tables before running the application.
 
 ### Creating Tables
@@ -113,6 +125,11 @@ CREATE TABLE session (
     user_id INT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     time_expire TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE game_saves (
+    user_id INT PRIMARY KEY,
+    game_data JSONB
 );
 ```
 
@@ -209,8 +226,8 @@ Tests use `testing.postgresql` to create a temporary, isolated PostgreSQL instan
 # Install dependencies (including test deps)
 pip install -r requirements.txt
 
-# Run all auth tests
-python3 -m pytest backend/tests/test_auth.py
+# Run all tests
+python3 -m pytest backend/tests
 
 # Run with verbose output
 python3 -m pytest backend/tests/test_auth.py -v
@@ -226,6 +243,9 @@ Current tests cover:
 - ✅ User login (success, invalid credentials)
 - ✅ User deletion (success, invalid credentials)
 - ✅ Complete register → login → delete flow
+- ✅ Game state saving and retrieval
+- ✅ Partial game state updates (location, notebook)
+- ✅ Idempotent updates for problems/minigames
 
 ### Writing New Tests
 
@@ -358,6 +378,61 @@ Delete user account (requires re-authentication).
 - Deletes all sessions for the user first
 - Then deletes the user record
 - Uses database transaction for atomicity
+
+---
+
+### Game State Management
+
+#### POST `/game/save`
+Save current game state.
+
+**Request**:
+```json
+{
+  "location": {"room": "Start", "x": 0, "y": 0},
+  "notebook": {},
+  "access": {},
+  "npc": []
+}
+```
+
+**Response** (200 OK):
+```json
+{
+  "ok": true
+}
+```
+
+#### GET `/game/sync`
+Retrieve saved game state.
+
+**Response** (200 OK):
+```json
+{
+  "location": {"room": "Start", "x": 0, "y": 0},
+  "notebook": {},
+  "access": {},
+  "npc": []
+}
+```
+
+#### PUT `/game/update`
+Update specific parts of the game state (e.g., location, completed problems).
+
+**Request**:
+```json
+{
+  "type": "location",
+  "msg": {"room": "Lab", "x": 10, "y": 20}
+}
+```
+
+**Response** (200 OK):
+```json
+{
+  "ok": true
+}
+```
 
 ---
 
