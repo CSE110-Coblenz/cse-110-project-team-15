@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Cookie
+from fastapi import APIRouter, Depends, Cookie, HTTPException, status
 
 import asyncpg  # type: ignore[import]
 from models.save import OkResponse, SaveRequest
-from repo.saves import upsert_save
 
 from core.dependencies import get_db_connection, get_current_user
-import json
 
 game_save_router = APIRouter(tags=["game"])
 USERNAME = "demo"
