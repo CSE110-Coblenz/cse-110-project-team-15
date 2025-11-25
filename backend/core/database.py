@@ -83,4 +83,3 @@ async def close_db_pool() -> None:
     if _pool is not None:
         await _pool.close()
         _pool = None
-

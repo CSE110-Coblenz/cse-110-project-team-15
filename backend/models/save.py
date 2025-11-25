@@ -16,11 +16,11 @@ class SaveState(BaseModel):
     access: Dict[str, Any] = Field(default_factory=dict)
     npc: List[Npc] = Field(default_factory=list)
 
-class SyncResponse(SaveState):
-    pass
-
 class SaveRequest(SaveState):
     pass
 
 class OkResponse(BaseModel):
     ok: bool = True
+
+class SyncResponse(SaveState):
+    pass
