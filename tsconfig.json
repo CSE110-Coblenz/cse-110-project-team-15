@@ -9,7 +9,8 @@
       "DOM.Iterable"
     ],
     "types": [
-      "vite/client"
+      "vite/client",
+      "node"
     ],
     "skipLibCheck": true,
     /* Bundler mode */
@@ -28,5 +29,7 @@
   },
   "include": [
     "src",
-    "frontend/src/screens"  ]
+    "frontend/src",
+    "frontend/tests"
+  ]
 }

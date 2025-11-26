@@ -21,6 +21,3 @@ class SaveRequest(SaveState):
 
 class OkResponse(BaseModel):
     ok: bool = True
-
-class SyncResponse(SaveState):
-    pass
