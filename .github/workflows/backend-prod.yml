@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'cse110-team15-backend-prod' # Update this to match your created resource
+  AZURE_WEBAPP_NAME: 'cse110-team15-backend-prod'
   ACR_NAME: 'cse110team15acr'
   IMAGE_NAME: 'backend'
   PYTHON_VERSION: '3.11'

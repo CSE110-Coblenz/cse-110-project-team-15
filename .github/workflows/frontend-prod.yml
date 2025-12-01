@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'cse110-team15-frontend-prod' # Update this to match your created resource
+  AZURE_WEBAPP_NAME: 'cse110-team15-frontend-prod' 
   ACR_NAME: 'cse110team15acr'
   IMAGE_NAME: 'frontend'
   NODE_VERSION: '20.x'
@@ -64,15 +64,3 @@ jobs:
         run: |
           # Run the API client tests against the live backend
           npm test
-
-      # - name: Verify Deployment (Smoke Test)
-      #   env:
-      #     STAGING_URL: https://${{ env.AZURE_WEBAPP_NAME }}-staging.azurewebsites.net
-      #   run: |
-      #     # Simple curl check to ensure the site is up
-      #     curl -f $STAGING_URL || exit 1
-
-      # - name: Swap to Production
-      #   if: success()
-      #   run: |
-      #     az webapp deployment slot swap --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group cse110-rg --slot staging --target-slot production

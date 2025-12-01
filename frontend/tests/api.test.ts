@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterAll, beforeAll } from "vitest";
 import { api, API_URL } from "../src/api";
 
 // Check if running in live mode
@@ -14,6 +14,26 @@ describe("API Client", () => {
     const uniqueId = Math.random().toString(36).substring(7);
     const testUser = `frontend_test_${uniqueId}@example.com`;
     const testPass = "password123";
+
+    const waitForHealth = async (retries = 10, delay = 5000) => {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const res = await api.health();
+                if (res.ok === true) return;
+            } catch (e) {
+                console.log(`Waiting for backend... (${i + 1}/${retries})`);
+            }
+            await new Promise((r) => setTimeout(r, delay));
+        }
+        throw new Error("Backend not ready after multiple retries");
+    };
+
+    beforeAll(async () => {
+        if (IS_LIVE) {
+            // Wait for backend to be ready (handle cold starts)
+            await waitForHealth(12, 5000); // Wait up to 60s
+        }
+    }, 70000);
 
     beforeEach(() => {
         if (!IS_LIVE) {
@@ -37,7 +57,7 @@ describe("API Client", () => {
 
     it("should call health endpoint", async () => {
         if (!IS_LIVE) {
-            const mockResponse = { status: "ok", db_status: "connected" };
+            const mockResponse = { ok: true, db_status: "connected" };
             (globalThis.fetch as any).mockResolvedValue({
                 ok: true,
                 json: async () => mockResponse,
@@ -48,10 +68,10 @@ describe("API Client", () => {
 
         if (!IS_LIVE) {
             expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/health`);
-            expect(res).toEqual({ status: "ok", db_status: "connected" });
+            expect(res).toEqual({ ok: true, db_status: "connected" });
         } else {
             // Live assertion
-            expect(res.status).toBe("ok");
+            expect(res.ok).toBe(true);
             expect(res.db_status).toBeDefined();
         }
     });
