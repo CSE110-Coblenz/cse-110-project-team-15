@@ -13,8 +13,8 @@ export interface SyncResponse {
 }
 
 export const api = {
-    async health(): Promise<{ status: string; db_status: string }> {
-        const res = await fetch(`${API_URL}/health`);
+    async health(): Promise<{ ok: boolean; db_status: string }> {
+        const res = await fetch(`${API_URL}/health`, { credentials: "include" });
         if (!res.ok) throw new Error("Health check failed");
         return res.json();
     },
@@ -24,6 +24,7 @@ export const api = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, pass }),
+            credentials: "include",
         });
         return res.json();
     },
@@ -33,6 +34,7 @@ export const api = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, pass }),
+            credentials: "include",
         });
         return res.json();
     },
@@ -42,12 +44,13 @@ export const api = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
+            credentials: "include",
         });
         return res.json();
     },
 
     async syncGame(): Promise<SyncResponse> {
-        const res = await fetch(`${API_URL}/game/sync`);
+        const res = await fetch(`${API_URL}/game/sync`, { credentials: "include" });
         if (!res.ok) throw new Error("Failed to sync game");
         return res.json();
     },
@@ -57,6 +60,7 @@ export const api = {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ type, msg, id }),
+            credentials: "include",
         });
         return res.json();
     },
@@ -66,6 +70,7 @@ export const api = {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, pass }),
+            credentials: "include",
         });
         return res.json();
     },

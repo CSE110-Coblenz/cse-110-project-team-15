@@ -34,7 +34,7 @@ async def test_user_lifecycle_flow(client: AsyncClient, test_user: dict):
     assert response.status_code == 200
     # Allow for flexible health response (db_status might vary in some envs, but should be connected)
     data = response.json()
-    assert data["status"] == "ok"
+    assert data["ok"] is True
     assert "db_status" in data
 
     # 2. Register

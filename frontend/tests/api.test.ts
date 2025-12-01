@@ -1,5 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterAll, beforeAll } from "vitest";
 import { api, API_URL } from "../src/api";
+
+import makeFetchCookie from "fetch-cookie";
 
 // Check if running in live mode
 const IS_LIVE = process.env.TEST_LIVE === "true";
@@ -7,6 +9,10 @@ const IS_LIVE = process.env.TEST_LIVE === "true";
 if (!IS_LIVE) {
     // Mock global fetch only if NOT in live mode
     globalThis.fetch = vi.fn();
+} else {
+    // Wrap fetch with cookie jar for live mode
+    const fetchCookie = makeFetchCookie(globalThis.fetch);
+    globalThis.fetch = fetchCookie as any;
 }
 
 describe("API Client", () => {
@@ -14,6 +20,26 @@ describe("API Client", () => {
     const uniqueId = Math.random().toString(36).substring(7);
     const testUser = `frontend_test_${uniqueId}@example.com`;
     const testPass = "password123";
+
+    const waitForHealth = async (retries = 10, delay = 5000) => {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const res = await api.health();
+                if (res.ok === true) return;
+            } catch (e) {
+                console.log(`Waiting for backend... (${i + 1}/${retries})`);
+            }
+            await new Promise((r) => setTimeout(r, delay));
+        }
+        throw new Error("Backend not ready after multiple retries");
+    };
+
+    beforeAll(async () => {
+        if (IS_LIVE) {
+            // Wait for backend to be ready (handle cold starts)
+            await waitForHealth(12, 5000); // Wait up to 60s
+        }
+    }, 70000);
 
     beforeEach(() => {
         if (!IS_LIVE) {
@@ -37,7 +63,7 @@ describe("API Client", () => {
 
     it("should call health endpoint", async () => {
         if (!IS_LIVE) {
-            const mockResponse = { status: "ok", db_status: "connected" };
+            const mockResponse = { ok: true, db_status: "connected" };
             (globalThis.fetch as any).mockResolvedValue({
                 ok: true,
                 json: async () => mockResponse,
@@ -47,11 +73,13 @@ describe("API Client", () => {
         const res = await api.health();
 
         if (!IS_LIVE) {
-            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/health`);
-            expect(res).toEqual({ status: "ok", db_status: "connected" });
+            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/health`, {
+                credentials: "include",
+            });
+            expect(res).toEqual({ ok: true, db_status: "connected" });
         } else {
             // Live assertion
-            expect(res.status).toBe("ok");
+            expect(res.ok).toBe(true);
             expect(res.db_status).toBeDefined();
         }
     });
@@ -72,6 +100,7 @@ describe("API Client", () => {
                 expect.objectContaining({
                     method: "POST",
                     body: JSON.stringify({ user: testUser, pass: testPass }),
+                    credentials: "include",
                 })
             );
             expect(res).toEqual({ ok: true, message: "Registered" });
@@ -96,6 +125,7 @@ describe("API Client", () => {
                 expect.objectContaining({
                     method: "POST",
                     body: JSON.stringify({ user: testUser, pass: testPass }),
+                    credentials: "include",
                 })
             );
             expect(res).toEqual({ ok: true, message: "Logged in" });
@@ -134,7 +164,9 @@ describe("API Client", () => {
         const res = await api.syncGame();
 
         if (!IS_LIVE) {
-            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/game/sync`);
+            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/game/sync`, {
+                credentials: "include",
+            });
             expect(res).toEqual({
                 location: { room: "Start", x: 0, y: 0 },
                 notebook: {},
@@ -163,6 +195,7 @@ describe("API Client", () => {
                 expect.objectContaining({
                     method: "PUT",
                     body: JSON.stringify({ type: "location", msg: { x: 10, y: 10 } }),
+                    credentials: "include",
                 })
             );
             expect(res).toEqual({ ok: true });
