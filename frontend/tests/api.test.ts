@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterAll, beforeAll } from "vitest";
 import { api, API_URL } from "../src/api";
 
 // Check if running in live mode
@@ -14,6 +14,26 @@ describe("API Client", () => {
     const uniqueId = Math.random().toString(36).substring(7);
     const testUser = `frontend_test_${uniqueId}@example.com`;
     const testPass = "password123";
+
+    const waitForHealth = async (retries = 10, delay = 5000) => {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const res = await api.health();
+                if (res.status === "ok") return;
+            } catch (e) {
+                console.log(`Waiting for backend... (${i + 1}/${retries})`);
+            }
+            await new Promise((r) => setTimeout(r, delay));
+        }
+        throw new Error("Backend not ready after multiple retries");
+    };
+
+    beforeAll(async () => {
+        if (IS_LIVE) {
+            // Wait for backend to be ready (handle cold starts)
+            await waitForHealth(12, 5000); // Wait up to 60s
+        }
+    }, 70000);
 
     beforeEach(() => {
         if (!IS_LIVE) {

@@ -6,7 +6,7 @@ from models.health import HealthResponse
 
 health_router = APIRouter(tags=["health"])
 
-@health_router.get("/health", response_model=HealthResponse)
+@health_router.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse)
 async def health_check(
     connection: asyncpg.Connection = Depends(get_db_connection),
 ):
