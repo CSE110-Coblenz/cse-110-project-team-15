@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: 'cse110-team15-backend-dev' # Update this to match your created resource
+  AZURE_WEBAPP_NAME: 'cse110-team15-backend-dev' 
   ACR_NAME: 'cse110team15acr'
   IMAGE_NAME: 'backend-dev'
   PYTHON_VERSION: '3.11'
@@ -53,11 +53,6 @@ jobs:
 
       - name: Log in to Azure Container Registry
         run: az acr login --name ${{ env.ACR_NAME }}
-
-      - name: Set Web App Settings
-        uses: azure/appservice-settings@v1
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
 
       - name: Build and Push Docker image
         run: |
