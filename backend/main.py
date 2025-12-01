@@ -6,13 +6,10 @@ from core.config import settings
 from core.database import close_db_pool, init_db_pool
 from routers.health import health_router
 
-# from routers.ping import ping_router
-# from routers.data import data_router
-# from routers.users import user_router
 from routers.register import register_router
 from routers.login import login_router
 from routers.delete import delete_router
-# from api.routers.sync import   ...
+
 from routers.sync import game_sync_router
 from routers.update import game_update_router
 from routers.save import game_save_router
@@ -32,11 +29,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        # add your Azure Static Web App URL later
-    ],
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

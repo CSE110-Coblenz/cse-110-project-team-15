@@ -42,7 +42,11 @@ async def handle_deletion_request(
         async with connection.transaction():
             # Delete sessions first (foreign key constraint usually handles this, but good to be explicit or if cascade isn't set)
             # Assuming CASCADE on delete in DB, but if not:
+            # Delete sessions first
             await connection.execute("DELETE FROM session WHERE user_id = $1", user_id)
+            
+            # Delete game saves
+            await connection.execute("DELETE FROM game_saves WHERE user_id = $1", user_id)
             
             # Delete user
             await connection.execute("DELETE FROM users WHERE user_id = $1", user_id)
