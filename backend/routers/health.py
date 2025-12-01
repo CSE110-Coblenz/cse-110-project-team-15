@@ -17,4 +17,4 @@ async def health_check(
         db_status = "disconnected"
         # Optionally return 503 if DB is down, but often 200 with status details is preferred for "app is up"
     
-    return HealthResponse(status="ok", db_status=db_status)
+    return HealthResponse(ok=True, db_status=db_status)

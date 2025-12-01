@@ -19,7 +19,7 @@ describe("API Client", () => {
         for (let i = 0; i < retries; i++) {
             try {
                 const res = await api.health();
-                if (res.status === "ok") return;
+                if (res.ok === true) return;
             } catch (e) {
                 console.log(`Waiting for backend... (${i + 1}/${retries})`);
             }
@@ -57,7 +57,7 @@ describe("API Client", () => {
 
     it("should call health endpoint", async () => {
         if (!IS_LIVE) {
-            const mockResponse = { status: "ok", db_status: "connected" };
+            const mockResponse = { ok: true, db_status: "connected" };
             (globalThis.fetch as any).mockResolvedValue({
                 ok: true,
                 json: async () => mockResponse,
@@ -68,10 +68,10 @@ describe("API Client", () => {
 
         if (!IS_LIVE) {
             expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/health`);
-            expect(res).toEqual({ status: "ok", db_status: "connected" });
+            expect(res).toEqual({ ok: true, db_status: "connected" });
         } else {
             // Live assertion
-            expect(res.status).toBe("ok");
+            expect(res.ok).toBe(true);
             expect(res.db_status).toBeDefined();
         }
     });

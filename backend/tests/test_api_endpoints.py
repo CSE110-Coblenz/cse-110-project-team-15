@@ -42,7 +42,7 @@ async def get_state_from_db(db_pool):
 async def test_health_get_ok(client: AsyncClient):
     r = await client.get("/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok", "db_status": "connected"}
+    assert r.json() == {"ok": True, "db_status": "connected"}
 
 
 # ---------- game/save ----------

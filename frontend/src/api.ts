@@ -13,7 +13,7 @@ export interface SyncResponse {
 }
 
 export const api = {
-    async health(): Promise<{ status: string; db_status: string }> {
+    async health(): Promise<{ ok: boolean; db_status: string }> {
         const res = await fetch(`${API_URL}/health`);
         if (!res.ok) throw new Error("Health check failed");
         return res.json();
