@@ -1,12 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterAll, beforeAll } from "vitest";
 import { api, API_URL } from "../src/api";
 
+import makeFetchCookie from "fetch-cookie";
+
 // Check if running in live mode
 const IS_LIVE = process.env.TEST_LIVE === "true";
 
 if (!IS_LIVE) {
     // Mock global fetch only if NOT in live mode
     globalThis.fetch = vi.fn();
+} else {
+    // Wrap fetch with cookie jar for live mode
+    const fetchCookie = makeFetchCookie(globalThis.fetch);
+    globalThis.fetch = fetchCookie as any;
 }
 
 describe("API Client", () => {
