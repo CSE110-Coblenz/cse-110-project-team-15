@@ -89,7 +89,7 @@ async def client(db_pool: asyncpg.Pool) -> AsyncGenerator[AsyncClient, None]:
     if remote_url:
         # Remote testing: Use standard AsyncClient pointing to the URL
         print(f"\nRunning tests against REMOTE URL: {remote_url}")
-        async with AsyncClient(base_url=remote_url) as ac:
+        async with AsyncClient(base_url=remote_url, timeout=30.0) as ac:
             yield ac
     else:
         # Local testing: Override DB and use app
