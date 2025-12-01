@@ -39,11 +39,10 @@ async def get_state_from_db(db_pool):
 # ---------- tests ----------
 
 @pytest.mark.asyncio
-async def test_health_head_ok(client: AsyncClient):
-    r = await client.head("/health")
+async def test_health_get_ok(client: AsyncClient):
+    r = await client.get("/health")
     assert r.status_code == 200
-    # HEAD should not return a body
-    assert r.text == ""
+    assert r.json() == {"ok": True, "db_status": "connected"}
 
 
 # ---------- game/save ----------

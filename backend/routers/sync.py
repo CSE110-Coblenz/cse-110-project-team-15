@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 import asyncpg  # type: ignore[import]
 import json
 from core.database import get_db_connection, get_current_user
-from models.save import SyncResponse
+from models.sync import SyncResponse
 
 game_sync_router = APIRouter(tags=["game"])
 

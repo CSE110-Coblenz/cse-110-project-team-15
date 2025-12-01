@@ -9,3 +9,4 @@ httpx
 testing.postgresql
 psycopg2-binary
 pytest-asyncio
+gunicorn
