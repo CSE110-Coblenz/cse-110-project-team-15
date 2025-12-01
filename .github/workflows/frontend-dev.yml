@@ -1,7 +1,7 @@
 name: Frontend Dev Build & Deploy
 
 on:
-  push:
+  pull_request:
     branches:
       - frontend
   workflow_dispatch:
