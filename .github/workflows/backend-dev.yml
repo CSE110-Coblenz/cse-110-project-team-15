@@ -58,7 +58,6 @@ jobs:
         uses: azure/appservice-settings@v1
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          app-settings-json: '[{ "name": "WEBSITES_PORT", "value": "8000" }]'
 
       - name: Build and Push Docker image
         run: |
