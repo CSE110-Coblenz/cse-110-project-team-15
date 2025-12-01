@@ -73,7 +73,9 @@ describe("API Client", () => {
         const res = await api.health();
 
         if (!IS_LIVE) {
-            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/health`);
+            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/health`, {
+                credentials: "include",
+            });
             expect(res).toEqual({ ok: true, db_status: "connected" });
         } else {
             // Live assertion
@@ -98,6 +100,7 @@ describe("API Client", () => {
                 expect.objectContaining({
                     method: "POST",
                     body: JSON.stringify({ user: testUser, pass: testPass }),
+                    credentials: "include",
                 })
             );
             expect(res).toEqual({ ok: true, message: "Registered" });
@@ -122,6 +125,7 @@ describe("API Client", () => {
                 expect.objectContaining({
                     method: "POST",
                     body: JSON.stringify({ user: testUser, pass: testPass }),
+                    credentials: "include",
                 })
             );
             expect(res).toEqual({ ok: true, message: "Logged in" });
@@ -160,7 +164,9 @@ describe("API Client", () => {
         const res = await api.syncGame();
 
         if (!IS_LIVE) {
-            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/game/sync`);
+            expect(globalThis.fetch).toHaveBeenCalledWith(`${API_URL}/game/sync`, {
+                credentials: "include",
+            });
             expect(res).toEqual({
                 location: { room: "Start", x: 0, y: 0 },
                 notebook: {},
@@ -189,6 +195,7 @@ describe("API Client", () => {
                 expect.objectContaining({
                     method: "PUT",
                     body: JSON.stringify({ type: "location", msg: { x: 10, y: 10 } }),
+                    credentials: "include",
                 })
             );
             expect(res).toEqual({ ok: true });
