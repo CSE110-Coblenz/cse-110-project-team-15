@@ -3,7 +3,6 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../../src/constants.ts";
 
 export class NotebookView {
     // Notebook elements
-    // Notebook elements
     private group: Konva.Group;
     private parentGroup: Konva.Group;
     private pageText: Konva.Text;
@@ -64,6 +63,7 @@ export class NotebookView {
                 stroke: "#8b5a2b",
                 strokeWidth: 2,
                 cornerRadius: 5,
+                name: `tab-${tab}`
             });
             const tabText = new Konva.Text({
                 x: tabRect.x() + 10,
@@ -83,7 +83,8 @@ export class NotebookView {
 
             tabRect.on("mouseleave", () => {
                 document.body.style.cursor = "default";
-                tabRect.fill(tab === this.currentTab ? "#c5a16b" : "#e9d3a6");
+                const isSelected = tab === this.currentTab;
+                tabRect.fill(isSelected ? "#b9915a" : "#e9d3a6");
                 this.parentGroup.getLayer()?.draw();
             });
 
