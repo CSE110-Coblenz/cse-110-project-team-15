@@ -5,6 +5,12 @@ import { NPCDialog } from "./NPCDialog";
 import { InteractableBlock } from "./InteractableBlock";
 import { HintBlocksManager } from "./HintBlocksManager";
 import type { HintBlockConfig } from "./HintBlocksManager";
+import { DoorCollisionManager } from "./DoorCollisionManager";
+import type { DoorCollisionConfig } from "./DoorCollisionManager";
+import { DoorPuzzleManager } from "./DoorPuzzleManager";
+import type { DoorPuzzle } from "./DoorPuzzleManager";
+
+
 
 
 
@@ -37,7 +43,7 @@ export class MainScene extends Phaser.Scene {
     private S!: Phaser.Input.Keyboard.Key;
     private D!: Phaser.Input.Keyboard.Key;
 
-    // Interaction key for doors / NPC.
+    // Interaction key for NPC.
     private keyE!: Phaser.Input.Keyboard.Key;
 
     // NPC wrapper class instance (encapsulates sprite, name tag, and prompt).
@@ -59,6 +65,11 @@ export class MainScene extends Phaser.Scene {
     private hintBlocksManager!: HintBlocksManager;
 
     private footstepSound!: Phaser.Sound.BaseSound;
+
+    private doorCollisionManager!: DoorCollisionManager;
+
+    private doorPuzzleManager!: DoorPuzzleManager;
+
 
 
 
@@ -82,6 +93,8 @@ export class MainScene extends Phaser.Scene {
 
         // Tiled map JSON exported from Tiled.
         this.load.tilemapTiledJSON("map", "/assets/map.json");
+
+        
 
         // NPC spritesheet; smaller 32x32 sprite with its own idle animation.
         this.load.spritesheet("npc", "/assets/character3.png", {
@@ -139,8 +152,69 @@ export class MainScene extends Phaser.Scene {
         // This layer is invisible but used for collision logic.
         const collision  = map.createLayer("Player Collision", tileset, 0, 0);
         collision!.setVisible(false);
-        // Mark all tiles except tile index -1 (empty) as collidable.
+        // Mark all tiles except tile index -1 (empty) as collidable....
         collision!.setCollisionByExclusion([-1]);
+
+        // ============================================
+        // DOOR COLLISION BLOCKS (5 doors)
+        // ============================================
+
+        const doorConfigs: DoorCollisionConfig[] = [
+            { id: 1, x: 192, y: 368, roomName: "Room 1: Guest Room"},
+            { id: 2, x: 384, y: 368, roomName: "Room 2: Unknown" },
+            { id: 3, x: 624, y: 512, roomName: "Room 3: Library" },
+            { id: 4, x: 928, y: 448, roomName: "Room 4: Office" },
+            { id: 5, x: 864, y: 368, roomName: "Room 5: Master Bedroom" },
+        ];
+
+        this.doorCollisionManager = new DoorCollisionManager(this, doorConfigs, 25);
+        this.npcDialog = new NPCDialog(this);
+
+        // --------------------------------------------
+        //  DOOR PUZZLE MANAGER (separate file now)
+        // --------------------------------------------
+        const doorPuzzles: Record<number, DoorPuzzle> = {
+            1: {
+                question:
+                    "Room 1 – Solve:\n\nx² - 5x + 6 = 0\n\nEnter the SMALLER root:",
+                correctAnswers: ["2"],
+            },
+            2: {
+                question:
+                    "Room 2 – Solve:\n\nx² + 4x + 4 = 0\n\nEnter the root:",
+                correctAnswers: ["-2"],
+            },
+            3: {
+                question:
+                    "Room 3 – Solve:\n\nx² - 1 = 0\n\nEnter either root:",
+                correctAnswers: ["1", "-1"],
+            },
+            4: {
+                question:
+                    "Room 4 – Solve:\n\nx² - x - 6 = 0\n\nEnter the LARGER root:",
+                correctAnswers: ["3"],
+            },
+            5: {
+                question:
+                    "Room 5 – Solve:\n\n2x² - 8x = 0\n\nEnter the NON-ZERO root:",
+                correctAnswers: ["4"],
+            },
+        };
+
+        this.doorPuzzleManager = new DoorPuzzleManager(
+            this,
+            this.npcDialog,
+            this.doorCollisionManager,
+            doorPuzzles
+        );
+
+
+        //listen for attempts so you can log or open puzzles
+        this.game.events.on("door-attempt", (doorId: number) => {
+            console.log("Door attempt from MainScene:", doorId);
+            //trigger puzzle UI, check hints, etc.
+        });
+
 
 
         // ============================================
@@ -171,6 +245,7 @@ export class MainScene extends Phaser.Scene {
 
         // Enable collision between the player and the hidden collision layer.
         this.physics.add.collider(this.player, collision!);
+
 
         // ============================================
         //  PLAYER WALKING ANIMATIONS
@@ -238,8 +313,6 @@ export class MainScene extends Phaser.Scene {
         // E is the main interaction key (talking to NPC, using doors).
         this.keyE = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
-        // Create the NPC dialog UI (bottom-of-screen box with text + close button).
-        this.npcDialog = new NPCDialog(this);
 
         // --------------------------------------------
         //  interactive blocks manager
@@ -396,6 +469,10 @@ export class MainScene extends Phaser.Scene {
         }
 
         this.hintBlocksManager.update(this.player, this.keyE);
+
+        this.doorCollisionManager.update(this.player, this.keyE);
+
+
 
     }
 
