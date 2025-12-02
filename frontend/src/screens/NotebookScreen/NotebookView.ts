@@ -3,7 +3,7 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../../src/constants.ts";
 
 export class NotebookView {
     // Notebook elements
-    private icon: Konva.Image | null = null;
+    // Notebook elements
     private group: Konva.Group;
     private parentGroup: Konva.Group;
     private pageText: Konva.Text;
@@ -16,25 +16,24 @@ export class NotebookView {
         onTabClick: (tab: string) => void,
         onToggle: () => void
     ) {
-         // Notebook overlay group
+        // Notebook overlay group
         this.parentGroup = parentGroup;
         this.onTabClick = onTabClick;
         this.onToggle = onToggle;
-        this.group = new Konva.Group({visible: false});
+        this.group = new Konva.Group({ visible: false });
         this.parentGroup.add(this.group);
 
-         // Load and display the notebook image using Konva.Image.fromURL()
+        // Load and display the notebook image using Konva.Image.fromURL()
         Konva.Image.fromURL("/notebook_icon.png", (image) => {
             image.width(80);
             image.height(80);
             image.x(STAGE_WIDTH / 2 - 380);
             image.y(STAGE_HEIGHT - 80);
             image.on("click", () => this.onToggle());
-            this.icon = image;
             this.parentGroup.add(image);
             this.parentGroup.getLayer()?.draw();
         });
-            
+
         // Notebook background
         const notebookBg = new Konva.Rect({
             x: 100,
@@ -50,7 +49,7 @@ export class NotebookView {
             cornerRadius: 10,
         });
         this.group.add(notebookBg);
-            
+
         // Tabs for notebook
 
         const tabs = ["Clues", "Hints", "Lessons"];
@@ -66,7 +65,6 @@ export class NotebookView {
                 stroke: "#8b5a2b",
                 strokeWidth: 2,
                 cornerRadius: 5,
-                name: `tab-${tab}`
             });  
             const tabText = new Konva.Text({
                 x: tabRect.x() + 10,
@@ -77,33 +75,13 @@ export class NotebookView {
                 fill: "black",
             });
             
-            // Hover highlight
-            tabRect.on("mouseenter", () => {
-                document.body.style.cursor = "pointer";
-                tabRect.fill("#d8bb8a");
-                this.parentGroup.getLayer()?.draw();
-            });
-            tabRect.on("mouseleave", () => {
-                document.body.style.cursor = "default";
-                tabRect.fill(tab === this.currentTab ? "#c5a16b" : "#e9d3a6");
-                this.parentGroup.getLayer()?.draw();
-            });
-
-            tabRect.on("click", () => {
-                this.currentTab = tab;
-                this.highlightTab(tab);
-                this.onTabClick(tab);
-            });
-            tabText.on("click", () => {
-                this.currentTab = tab;
-                this.highlightTab(tab);
-                this.onTabClick(tab);
-            });
+            tabRect.on("click", () => this.onTabClick(tab));
+            tabText.on("click", () => this.onTabClick(tab));
 
             this.group.add(tabRect);
             this.group.add(tabText);
         });
-            
+
         // Page text
         this.pageText = new Konva.Text({
             x: 150,
@@ -116,7 +94,7 @@ export class NotebookView {
             lineHeight: 1.4,
         });
         this.group.add(this.pageText);
-            
+
         // Close notebook button
         const closeButton = new Konva.Text({
             x: STAGE_WIDTH - 180,
