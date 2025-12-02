@@ -64,7 +64,7 @@ export class NotebookView {
                 stroke: "#8b5a2b",
                 strokeWidth: 2,
                 cornerRadius: 5,
-            });  
+            });
             const tabText = new Konva.Text({
                 x: tabRect.x() + 10,
                 y: tabRect.y() + 8,
@@ -73,7 +73,7 @@ export class NotebookView {
                 fontFamily: "serif",
                 fill: "black",
             });
-            
+
             tabRect.on("click", () => this.onTabClick(tab));
             tabText.on("click", () => this.onTabClick(tab));
 
