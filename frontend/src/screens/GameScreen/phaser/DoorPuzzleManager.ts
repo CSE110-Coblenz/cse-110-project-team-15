@@ -16,6 +16,9 @@ export class DoorPuzzleManager {
     // All puzzles keyed by doorId
     private puzzles: Record<number, DoorPuzzle> = {};
 
+    // Track which doors have already been solved
+    private solvedDoors = new Set<number>();
+
     constructor(
         scene: Phaser.Scene,
         dialog: NPCDialog,
@@ -32,6 +35,24 @@ export class DoorPuzzleManager {
             this.handleDoorAttempt(doorId);
         });
     }
+    
+    private showTimedDialog(text: string, durationMs: number = 3000) {
+        this.dialog.setText(text);
+        this.dialog.show();
+
+        this.scene.time.delayedCall(
+            durationMs,
+            () => {
+                if (this.dialog.isVisible()) {
+                    this.dialog.hide();
+                }
+            },
+            [],
+            this
+        );
+    }
+
+
 
     private handleDoorAttempt(doorId: number) {
         const puzzle = this.puzzles[doorId];
@@ -40,26 +61,34 @@ export class DoorPuzzleManager {
             return;
         }
 
-        // Quick testing UI (simple JS prompt)
+        // If this door has already been solved, do nothing.
+        if (this.solvedDoors.has(doorId)) {
+            return;
+        }
+
         const raw = window.prompt(puzzle.question);
-        if (raw === null) return; // user canceled
+        if (raw === null) return; // user cancelled
 
         const answer = raw.trim();
 
         if (puzzle.correctAnswers.includes(answer)) {
-            // Correct → unlock the door
+            // ✅ Correct: mark solved & unlock
+            this.solvedDoors.add(doorId);
             this.doorCollisionManager.unlockDoor(doorId);
 
-            this.dialog.setText(
-                `You solved the problem!\nDoor ${doorId} is now unlocked.`
+            this.showTimedDialog(
+                `You solved the problem!\nDoor ${doorId} is now unlocked.`,
+                3000
             );
-            this.dialog.show();
         } else {
-            // Incorrect
-            this.dialog.setText(
-                "That answer isn't quite right.\nCheck your hints and try again."
+            // ❌ Incorrect: show error for 3s, then auto-hide
+            this.showTimedDialog(
+                "That answer isn't quite right.\nCheck your hints and try again.",
+                3000
             );
-            this.dialog.show();
         }
     }
+
+    
+
 }
