@@ -1,7 +1,12 @@
-// import Phaser from "phaser";
+import Phaser from "phaser";
 
 import { NPC } from "./NPC";
 import { NPCDialog } from "./NPCDialog";
+import { InteractableBlock } from "./InteractableBlock";
+import { HintBlocksManager } from "./HintBlocksManager";
+import type { HintBlockConfig } from "./HintBlocksManager";
+
+
 
 /**
  * MainScene
@@ -25,18 +30,6 @@ export class MainScene extends Phaser.Scene {
     private npcSprite!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     private npcPrompt!: Phaser.GameObjects.Text;
 
-    //  ---- Door-related fields ----
-    // Map from doorId -> actual Phaser zone (the invisible physics trigger area).
-    private doorsById!: Map<number, Phaser.GameObjects.Zone>;
-
-    // Map from doorId -> metadata (e.g., room number). Easy to extend later.
-    private doorMetaById!: Map<number, { room: number }>;
-
-    // Static group containing all door zones, so we can check overlap with player.
-    private doorZones!: Phaser.Physics.Arcade.StaticGroup;
-
-    // Stores the id of the door the player is currently overlapping (if any).
-    private currentDoorId: number | null = null;
 
     // WASD keys for movement.
     private W!: Phaser.Input.Keyboard.Key;
@@ -50,11 +43,24 @@ export class MainScene extends Phaser.Scene {
     // NPC wrapper class instance (encapsulates sprite, name tag, and prompt).
     private npc?: NPC;
 
+
+    private readBlock?: InteractableBlock;
+
     // Whether player is currently inside interaction radius of the NPC.
     private canTalkToNpc = false;
+    
 
     // UI dialog box anchored to the camera (bottom of screen).
     private npcDialog!: NPCDialog;
+
+
+    private hasSavedQuadraticHint = false;
+
+    private hintBlocksManager!: HintBlocksManager;
+
+    private footstepSound!: Phaser.Sound.BaseSound;
+
+
 
     constructor() {
         // This "MainScene" key lets us reference this scene from the Phaser game config.
@@ -62,8 +68,10 @@ export class MainScene extends Phaser.Scene {
     }
 
     preload(): void {
+        this.load.audio("footstep", "/assets/footsteps.mp3");
+
         // Player walking animation frames.
-        // The spritesheet is 80x80 per frame, with 3 rows (right / down / up).
+        // The spritesheet is 80x80 per frame, with 3 rows (right / down / up)..
         this.load.spritesheet("player", "/assets/walk.png", {
             frameWidth: 80,
             frameHeight: 80,
@@ -134,61 +142,6 @@ export class MainScene extends Phaser.Scene {
         // Mark all tiles except tile index -1 (empty) as collidable.
         collision!.setCollisionByExclusion([-1]);
 
-        // ============================================
-        //  DOOR LOGIC – read objects from Tiled.
-        // ============================================
-        // Each "Rooms/X/doors" object layer in Tiled contains door rectangles.
-        // Each object has a custom property "doorId" that uniquely identifies it.
-        const roomsDoorsLayers = [
-            map.getObjectLayer("Rooms/1/doors"),
-            map.getObjectLayer("Rooms/2/doors"),
-            map.getObjectLayer("Rooms/3/doors"),
-            map.getObjectLayer("Rooms/4/doors"),
-            map.getObjectLayer("Rooms/5/doors"),
-            map.getObjectLayer("Rooms/6/doors"),
-        ];
-
-        // Initialize door data structures.
-        this.doorsById    = new Map<number, Phaser.GameObjects.Zone>();
-        this.doorMetaById = new Map<number, { room: number }>();
-
-        // Static group so that all door zones behave as static physics bodies.
-        this.doorZones    = this.physics.add.staticGroup();
-
-        // Loop through each room's door layer, if it exists.
-        roomsDoorsLayers.forEach((layer, roomIndex) => {
-            if (!layer) return;
-            // Room numbers are 1-based (Room 1..6 instead of 0..5).
-            const roomNumber = roomIndex + 1;
-
-            layer.objects.forEach((obj: any) => {
-                // Find the "doorId" custom property on this object.
-                const doorId = obj.properties?.find(
-                    (p: any) => p.name === "doorId"
-                )?.value;
-                if (doorId == null) return;
-
-                // Create an invisible physics Zone at the door position.
-                // Tiled uses x,y as top-left; width/height define the trigger area.
-                const zone = this.add.zone(
-                    obj.x,
-                    obj.y,
-                    obj.width || 32,
-                    obj.height || 32
-                );
-                // Convert the zone into a static physics body so Arcade physics can overlap with it.
-                this.physics.add.existing(zone, true); // true => static body
-
-                // Attach the doorId to the zone so we can retrieve it in the overlap callback.
-                (zone as any).setData("doorId", doorId);
-
-                // Add to the static group (for overlap checks).
-                this.doorZones.add(zone);
-                // Track the zone and metadata by id for future reference.
-                this.doorsById.set(doorId, zone as Phaser.GameObjects.Zone);
-                this.doorMetaById.set(doorId, { room: roomNumber });
-            });
-        });
 
         // ============================================
         //  PLAYER SETUP
@@ -247,6 +200,19 @@ export class MainScene extends Phaser.Scene {
             repeat: -1,
         });
 
+        
+
+        // ============================================
+        //  Footstep sound
+        // ============================================
+
+
+        this.footstepSound = this.sound.add("footstep", {
+            loop: true,       // footsteps should loop
+            volume: 0.3       // adjust to taste
+        });
+
+
         // ============================================
         //  NPC SETUP
         // ============================================
@@ -274,6 +240,38 @@ export class MainScene extends Phaser.Scene {
 
         // Create the NPC dialog UI (bottom-of-screen box with text + close button).
         this.npcDialog = new NPCDialog(this);
+
+        // --------------------------------------------
+        //  interactive blocks manager
+        // --------------------------------------------
+        // HINT BLOCK CONFIG LIST
+        const hintConfigs: HintBlockConfig[] = [
+            {
+                x: 160,
+                y: 320,
+                text:
+                    "- A quadratic always hides two answers — the roots.\n" +
+                    "Find the two numbers that make it equal zero.",
+            },
+            {
+                x: 390,
+                y: 190,
+                text:
+                    "- To factor ax² + bx + c,\n" +
+                    "find two numbers that sum to b and multiply to ac.",
+            },
+            {
+                x: 595,
+                y: 85,
+                text:
+                    "- Every quadratic draws a parabola.\nThe lowest point is called the vertex.",
+            },
+        ];
+
+        // Create manager
+        this.hintBlocksManager = new HintBlocksManager(this, this.npcDialog, hintConfigs);
+
+
     }
 
     update(): void {
@@ -332,30 +330,6 @@ export class MainScene extends Phaser.Scene {
             }
         }
 
-        // --------------------------------------------
-        // DOOR DETECTION (player overlapping invisible zones)
-        // --------------------------------------------
-        this.currentDoorId = null;
-
-        // Check overlap between the player and all door zones in the static group.
-        // We don't want a physical collision; we just want triggers.
-        this.physics.overlap(
-            this.player,
-            this.doorZones,
-            (_player, zone) => {
-                // Grab the doorId from the zone data.
-                this.currentDoorId = (zone as any).getData("doorId");
-            }
-        );
-
-        // If the player is currently overlapping a door zone and presses E,
-        // we perform the door interaction logic.
-        if (
-            this.currentDoorId !== null &&
-            Phaser.Input.Keyboard.JustDown(this.keyE)
-        ) {
-            this.useDoor(this.currentDoorId);
-        }
 
         // --------------------------------------------
         // PLAYER MOVEMENT + ANIMATIONS
@@ -395,12 +369,34 @@ export class MainScene extends Phaser.Scene {
 
         // Apply the resulting velocity to the player's physics body.
         this.player.setVelocity(vx, vy);
+        // If the player is moving
+
+        
+        const isMoving = vx !== 0 || vy !== 0;
+
+        if (isMoving) {
+            if (!this.footstepSound.isPlaying) {
+                this.footstepSound.play();
+            }
+        } else {
+            if (this.footstepSound.isPlaying) {
+                this.footstepSound.stop();
+            }
+        }
+
 
         // If we didn't play any movement animation this frame, the player is idle.
         if (!played) {
             this.player.setVelocity(0, 0);
             this.player.anims.stop(); // Freeze on current frame (idle).
         }
+
+        if (this.readBlock) {
+            this.readBlock.update(this.player, this.keyE);
+        }
+
+        this.hintBlocksManager.update(this.player, this.keyE);
+
     }
 
     /**
@@ -411,14 +407,4 @@ export class MainScene extends Phaser.Scene {
      * and doorMetaById (for example, load a puzzle, transition rooms,
      * show "door is locked", etc.)
      */
-    private useDoor(doorId: number): void {
-        // Example: look up the room number from metadata.
-        const meta = this.doorMetaById.get(doorId);
-        console.log("Using door", doorId, "meta:", meta);
-
-        // TODO: implement actual door behavior here (room transitions, locked door feedback, etc.).
-        // For the oral exam, you can say:
-        // "I wired up data-driven door zones and a hook for door logic here;
-        //  we can easily extend this to handle different door types or puzzles."
-    }
 }

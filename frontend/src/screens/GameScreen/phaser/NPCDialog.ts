@@ -71,7 +71,7 @@ export class NPCDialog {
         // ------------------------------------------------
         // CLOSE BUTTON ("X" in the top-right)
         // ------------------------------------------------
-        const closeBtn = scene.add.text(bgWidth - 18, 6, "X", {
+        const closeBtn = scene.add.text(bgWidth - 18, 6, "E", {
             fontSize: "18px",
             fontFamily: "serif",
             color: "#ffffff",
