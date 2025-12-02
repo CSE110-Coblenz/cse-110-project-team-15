@@ -74,8 +74,30 @@ export class NotebookView {
                 fill: "black",
             });
 
-            tabRect.on("click", () => this.onTabClick(tab));
-            tabText.on("click", () => this.onTabClick(tab));
+            // Hover highlight
+            tabRect.on("mouseenter", () => {
+                document.body.style.cursor = "pointer";
+                tabRect.fill("#d8bb8a");
+                this.parentGroup.getLayer()?.draw();
+            });
+
+            tabRect.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+                tabRect.fill(tab === this.currentTab ? "#c5a16b" : "#e9d3a6");
+                this.parentGroup.getLayer()?.draw();
+            });
+
+            tabRect.on("click", () => {
+                this.currentTab = tab;
+                this.highlightTab(tab);
+                this.onTabClick(tab);
+            });
+
+            tabText.on("click", () => {
+                this.currentTab = tab;
+                this.highlightTab(tab);
+                this.onTabClick(tab);
+            });
 
             this.group.add(tabRect);
             this.group.add(tabText);
