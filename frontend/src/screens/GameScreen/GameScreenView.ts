@@ -9,15 +9,6 @@ import { MainScene } from "./phaser/MainScene.ts";
  * GameScreenView - Renders the game UI using Konva and Phaser3
  */
 
-// class BlackScene extends Phaser.Scene{
-// 	constructor(){
-// 		super("BlackScene");
-// 	}
-
-// 	create(){
-// 		this.cameras.main.setBackgroundColor("#2ab121ff");
-// 	}
-// }
 export class GameScreenView implements View {
 	private group: Konva.Group;
 	private notebook!: NotebookController;

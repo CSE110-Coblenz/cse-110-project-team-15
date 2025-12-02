@@ -51,7 +51,6 @@ export class NotebookView {
         this.group.add(notebookBg);
 
         // Tabs for notebook
-
         const tabs = ["Clues", "Hints", "Lessons"];
         tabs.forEach((tab, i) => {
             const isDefault = i === 0;
