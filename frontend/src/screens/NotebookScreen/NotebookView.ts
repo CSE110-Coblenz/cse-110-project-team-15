@@ -1,6 +1,9 @@
 import Konva from "konva";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "../../../src/constants.ts";
 
+/**
+ * NotebookView - Renders the notebook screen
+ */
 export class NotebookView {
     // Notebook elements
     private group: Konva.Group;

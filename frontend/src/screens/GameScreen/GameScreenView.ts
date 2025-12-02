@@ -8,7 +8,6 @@ import { MainScene } from "./phaser/MainScene.ts";
 /**
  * GameScreenView - Renders the game UI using Konva and Phaser3
  */
-
 export class GameScreenView implements View {
 	private group: Konva.Group;
 	private notebook!: NotebookController;
