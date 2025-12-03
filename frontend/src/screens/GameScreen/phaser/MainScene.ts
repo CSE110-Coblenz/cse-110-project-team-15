@@ -31,6 +31,12 @@ export class MainScene extends Phaser.Scene {
 
     // Arrow key input (up/down/left/right), created from Phaser's helper.
     private cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
+    private wasd: {
+        up: Phaser.Input.Keyboard.Key;
+        down: Phaser.Input.Keyboard.Key;
+        left: Phaser.Input.Keyboard.Key;
+        right: Phaser.Input.Keyboard.Key;
+    } | null = null;
 
     // (Old fields; NPC is now wrapped in the NPC class, but we keep these around if needed.)
     private npcSprite!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
@@ -104,7 +110,7 @@ export class MainScene extends Phaser.Scene {
             frameHeight: 32,
         });
     }
-
+    //.
     create(): void {
         // Create the Tilemap instance from the JSON we loaded in preload().
         const map = this.make.tilemap({ key: "map" });
@@ -115,6 +121,7 @@ export class MainScene extends Phaser.Scene {
         // Attach the tileset image to the map.
         // "main" must match the tileset name in Tiled. "tiles" is the key from preload().
         const tileset = map.addTilesetImage("main", "tiles");
+
         if (!tileset) {
             console.error(
                 "Tileset not found. Check the name in Tiled and the key 'tiles' in preload()."
@@ -164,12 +171,15 @@ export class MainScene extends Phaser.Scene {
             }
         });
 
-        // Foreground art that should draw above the player or certain objects.
-        const foreground = map.createLayer("Foreground", tileset, 0, 0);
+        map.createLayer("Background/Background", tileset, 0, 0);
+        map.createLayer("Background/Wall Overlay", tileset, 0, 0);
+        map.createLayer("Background/Floor Overlay", tileset, 0, 0);
+        map.createLayer("Background/Furniture Back", tileset, 0, 0);
+        map.createLayer("Background/Furniture Front", tileset, 0, 0);
+        map.createLayer("Background/Front", tileset, 0, 0);
 
-        // --------- COLLISION LAYER ---------
-        // This layer is invisible but used for collision logic.
-        const collision  = map.createLayer("Player Collision", tileset, 0, 0);
+        map.createLayer("Foreground", tileset, 0, 0);
+        const collision = map.createLayer("Player Collision", tileset, 0, 0);
         collision!.setVisible(false);
         // Mark all tiles except tile index -1 (empty) as collidable....
         collision!.setCollisionByExclusion([-1]);
