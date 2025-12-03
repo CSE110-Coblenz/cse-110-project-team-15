@@ -14,7 +14,7 @@ type DoorEntry = {
     rect: Phaser.GameObjects.Rectangle;
     label: Phaser.GameObjects.Text;
     locked: boolean;
-    collider?: Phaser.Physics.Arcade.Collider;   // NEW: collider to block player
+    collider?: Phaser.Physics.Arcade.Collider;
 };
 
 export class DoorCollisionManager {
@@ -31,14 +31,18 @@ export class DoorCollisionManager {
         this.proximityRadius = proximityRadius;
 
         configs.forEach((cfg) => {
-            // Invisible collision block (32x16)
-            const rect = scene.add.rectangle(cfg.x, cfg.y, 32, 16, 0xff0000, 0);
-            // For debugging, change alpha from 0 to 0.3 to see them
+            // Create collision rectangle
+            // Using alpha 0.3 for debugging - change to 0 for production
+            const rect = scene.add.rectangle(cfg.x, cfg.y, 32, 16, 0xff0000, 0.3);
             rect.setOrigin(0.5, 1);
             rect.setDepth(5);
 
-            // Give it a static physics body (but we’ll hook collision later)
-            scene.physics.add.existing(rect, true); // static body
+            // IMPORTANT: Add physics body as a STATIC body
+            scene.physics.add.existing(rect, true);
+
+            // Static bodies are immovable by default, just ensure it's enabled
+            const body = rect.body as Phaser.Physics.Arcade.StaticBody;
+            body.enable = true;
 
             // Popup label above the door
             const labelText =
@@ -70,18 +74,23 @@ export class DoorCollisionManager {
 
     /**
      * Call this once from MainScene.create(), AFTER the player is created.
-     * This actually makes locked doors block the player.
+     * This creates colliders between the player and each locked door.
      */
     public attachPlayer(
         player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
     ) {
         this.doors.forEach((door) => {
-            const body = door.rect.body as Phaser.Physics.Arcade.Body;
-            body.setImmovable(true);
-            body.enable = true;
-
-            // Create a collider between player and the door rectangle.
-            door.collider = this.scene.physics.add.collider(player, door.rect);
+            // Create a collider between player and the door rectangle
+            door.collider = this.scene.physics.add.collider(
+                player,
+                door.rect,
+                () => {
+                    // Optional: callback when collision happens
+                    console.log(`Colliding with door ${door.id}`);
+                },
+                undefined,
+                this
+            );
         });
     }
 
@@ -128,8 +137,14 @@ export class DoorCollisionManager {
                 door.collider = undefined;
             }
 
-            const body = door.rect.body as Phaser.Physics.Arcade.Body;
-            body.enable = false; // no more collision checks for this door
+            // Disable the physics body entirely
+            const body = door.rect.body as Phaser.Physics.Arcade.StaticBody;
+            body.enable = false;
+
+            // Optionally hide the debug rectangle
+            door.rect.setVisible(false);
+
+            this.scene.game.events.emit("door-unlocked", doorId);
         }
     }
 }

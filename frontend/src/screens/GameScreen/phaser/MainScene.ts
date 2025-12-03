@@ -70,6 +70,8 @@ export class MainScene extends Phaser.Scene {
 
     private doorPuzzleManager!: DoorPuzzleManager;
 
+    private unexploredLayers: Record<number, Phaser.Tilemaps.TilemapLayer | null> = {};
+
 
 
 
@@ -145,6 +147,23 @@ export class MainScene extends Phaser.Scene {
         unexplored4!.setVisible(true);
         unexplored5!.setVisible(true);
 
+        //id - unexplored layer dictionary
+        this.unexploredLayers = {
+            1: unexplored1,
+            2: unexplored2,
+            3: unexplored3,
+            4: unexplored4,
+            5: unexplored5,
+        };
+
+        // listen door event，close the cover based on doors id
+        this.game.events.on("door-unlocked", (doorId: number) => {
+            const layer = this.unexploredLayers[doorId];
+            if (layer) {
+                layer.setVisible(false);  // The room will be uncovered
+            }
+        });
+
         // Foreground art that should draw above the player or certain objects.
         const foreground = map.createLayer("Foreground", tileset, 0, 0);
 
@@ -167,7 +186,7 @@ export class MainScene extends Phaser.Scene {
             { id: 5, x: 864, y: 368, roomName: "Room 5: Master Bedroom" },
         ];
 
-        this.doorCollisionManager = new DoorCollisionManager(this, doorConfigs, 25);
+        this.doorCollisionManager = new DoorCollisionManager(this, doorConfigs, 40);
         this.npcDialog = new NPCDialog(this);
 
         // --------------------------------------------
@@ -222,6 +241,7 @@ export class MainScene extends Phaser.Scene {
         // ============================================
         // Spawn the player as a physics-enabled sprite. The frame index 0 is the idle frame.
         this.player = this.physics.add.sprite(200, 200, "player", 0);
+        
         // Set a high depth so the player draws above most background layers.
         this.player.setDepth(10);
 
@@ -239,9 +259,11 @@ export class MainScene extends Phaser.Scene {
         const offsetX = (this.player.width - hitWidth) / 2;
         const offsetY = 34; // Tweak by hand until it "feels" like it's at the feet.
         body.setOffset(offsetX, offsetY);
+        
 
         // Make the camera continuously follow the player as they move.
         this.cameras.main.startFollow(this.player);
+        
 
         // Enable collision between the player and the hidden collision layer.
         this.physics.add.collider(this.player, collision!);
@@ -344,6 +366,7 @@ export class MainScene extends Phaser.Scene {
         // Create manager
         this.hintBlocksManager = new HintBlocksManager(this, this.npcDialog, hintConfigs);
 
+        this.doorCollisionManager.attachPlayer(this.player);
 
     }
 
