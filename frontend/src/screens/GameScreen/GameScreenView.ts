@@ -28,7 +28,7 @@ export class GameScreenView implements View {
 			y: 0,
 			width: STAGE_WIDTH,
 			height: STAGE_HEIGHT,
-			fill: "white", // Parchment color
+			fill: "#fffbea", // Parchment color
 		});
 		this.group.add(bg);
 
@@ -42,8 +42,6 @@ export class GameScreenView implements View {
 			fill: "darkRed",
 			align: "center",
 		});
-
-		//in-gameview
 
 		titleText.offsetX(titleText.width() / 2);
 		this.group.add(titleText);
@@ -69,11 +67,24 @@ export class GameScreenView implements View {
 		});
 		pauseText.offsetX(pauseText.width() / 2);
 
+		// Pause button group
 		const pauseGroup = new Konva.Group();
 		pauseGroup.add(pauseButton);
 		pauseGroup.add(pauseText);
 		pauseGroup.on("click", this.onPauseClick);
 		this.group.add(pauseGroup);
+
+		// Pause button hover effects
+		pauseGroup.on("mouseenter", () => {
+    		document.body.style.cursor = "pointer";
+    		pauseButton.fill("maroon");
+    		this.group.getLayer()?.draw();
+		});
+		pauseGroup.on("mouseleave", () => {
+    		document.body.style.cursor = "default";
+    		pauseButton.fill("darkred");
+    		this.group.getLayer()?.draw();
+		});
 
 		//Find the root container that Konva is using
 		const root = document.getElementById("container")

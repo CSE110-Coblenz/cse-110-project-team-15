@@ -86,7 +86,6 @@ export class MenuScreenView implements View {
     	startButton.fill("maroon"); // darker red
     	this.group.getLayer()?.draw();
 		});
-
 		startButtonGroup.on("mouseleave", () => {
     	document.body.style.cursor = "default";
     	startButton.fill("darkred");

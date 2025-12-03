@@ -32,6 +32,19 @@ export class NotebookView {
             image.x(STAGE_WIDTH / 2 - 380);
             image.y(STAGE_HEIGHT - 80);
             image.on("click", () => this.onToggle());
+            
+            // Notebook icon hover effects
+            image.on("mouseenter", () => {
+                document.body.style.cursor = "pointer";
+                image.opacity(0.8);
+                this.parentGroup.getLayer()?.draw();
+            });
+            image.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+                image.opacity(1);
+                this.parentGroup.getLayer()?.draw();
+            });
+
             this.parentGroup.add(image);
             this.parentGroup.getLayer()?.draw();
         });
@@ -77,13 +90,12 @@ export class NotebookView {
                 fill: "black",
             });
 
-            // Hover highlight
+            // Tab hover effects
             tabRect.on("mouseenter", () => {
                 document.body.style.cursor = "pointer";
                 tabRect.fill("#d8bb8a");
                 this.parentGroup.getLayer()?.draw();
             });
-
             tabRect.on("mouseleave", () => {
                 document.body.style.cursor = "default";
                 const isSelected = tab === this.currentTab;
@@ -96,7 +108,6 @@ export class NotebookView {
                 this.highlightTab(tab);
                 this.onTabClick(tab);
             });
-
             tabText.on("click", () => {
                 this.currentTab = tab;
                 this.highlightTab(tab);
@@ -130,6 +141,19 @@ export class NotebookView {
             fontFamily: "serif",
         });
         closeButton.on("click", () => this.onToggle());
+        
+        // Close button hover effects
+        closeButton.on("mouseenter", () => {
+            document.body.style.cursor = "pointer";
+            closeButton.fill("maroon");
+            this.parentGroup.getLayer()?.draw();
+        });
+        closeButton.on("mouseleave", () => {
+            document.body.style.cursor = "default";
+            closeButton.fill("darkred");
+            this.parentGroup.getLayer()?.draw();
+        });
+
         this.group.add(closeButton);
     }
 
