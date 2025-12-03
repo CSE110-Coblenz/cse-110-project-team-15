@@ -1,6 +1,7 @@
 import Konva from "konva";
 import type { ScreenSwitcher, Screen } from "./types.ts";
 import { MenuScreenController } from "./screens/MenuScreen/MenuScreenController.ts";
+import { LoginScreenController } from "./screens/LoginScreen/LoginScreenController.ts";
 import { GameScreenController } from "./screens/GameScreen/GameScreenController.ts";
 import { PauseScreenController } from "./screens/PauseScreen/PauseScreenController.ts";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "./constants.ts";
@@ -22,6 +23,7 @@ class App implements ScreenSwitcher {
 	private menuController: MenuScreenController;
 	private gameController: GameScreenController;
 	private pauseController: PauseScreenController;
+	private loginController: LoginScreenController;
 
 	constructor(container: string) {
 		// Initialize Konva stage (the main canvas)
@@ -38,11 +40,13 @@ class App implements ScreenSwitcher {
 		// Initialize all screen controllers
 		// Each controller manages a Model, View, and handles user interactions
 		this.menuController = new MenuScreenController(this);
+		this.loginController = new LoginScreenController(this);
 		this.gameController = new GameScreenController(this);
 		this.pauseController = new PauseScreenController(this);
 
 		// Add all screen groups to the layer
 		// All screens exist simultaneously but only one is visible at a time
+		this.layer.add(this.loginController.getView().getGroup());
 		this.layer.add(this.menuController.getView().getGroup());
 		this.layer.add(this.gameController.getView().getGroup());
 		this.layer.add(this.pauseController.getView().getGroup());
@@ -50,8 +54,8 @@ class App implements ScreenSwitcher {
 		// Draw the layer (render everything to the canvas)
 		this.layer.draw();
 
-		// Start with menu screen visible
-		this.menuController.getView().show();
+		// Start with login screen visible
+		this.loginController.getView().show();
 	}
 
 	/**
@@ -68,9 +72,13 @@ class App implements ScreenSwitcher {
 		this.menuController.hide();
 		this.gameController.hide();
 		this.pauseController.hide();
+		this.loginController.hide();
 
 		// Show the requested screen based on the screen type
 		switch (screen.type) {
+			case "login":
+				this.loginController.show();
+				break;
 			case "menu":
 				this.menuController.show();
 				break;
