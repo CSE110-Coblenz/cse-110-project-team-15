@@ -31,14 +31,7 @@ export class MainScene extends Phaser.Scene {
 
     // Arrow key input (up/down/left/right), created from Phaser's helper.
     private cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
-    private wasd: {
-        up: Phaser.Input.Keyboard.Key;
-        down: Phaser.Input.Keyboard.Key;
-        left: Phaser.Input.Keyboard.Key;
-        right: Phaser.Input.Keyboard.Key;
-    } | null = null;
 
-    // (Old fields; NPC is now wrapped in the NPC class, but we keep these around if needed.)
 
 
     // WASD keys for movement.

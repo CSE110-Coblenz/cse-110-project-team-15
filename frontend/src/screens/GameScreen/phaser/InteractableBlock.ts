@@ -2,7 +2,6 @@
 import Phaser from "phaser";
 
 export class InteractableBlock {
-    private scene: Phaser.Scene;
     private rect: Phaser.GameObjects.Rectangle;
     private prompt: Phaser.GameObjects.Text;
     private onInteract: () => void;
@@ -14,7 +13,6 @@ export class InteractableBlock {
         onInteract: () => void,
         promptText: string = "Press E to read"
     ) {
-        this.scene = scene;
         this.onInteract = onInteract;
 
         this.rect = scene.add.rectangle(x, y, 24, 24, 0x3a86ff, 1);

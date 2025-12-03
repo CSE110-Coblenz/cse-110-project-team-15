@@ -19,7 +19,6 @@ import Phaser from "phaser";
  */
 export class NPCDialog {
     // Scene that owns this UI.
-    private scene: Phaser.Scene;
 
     // A container that groups the background, close button, and text.
     private container: Phaser.GameObjects.Container;
@@ -31,8 +30,6 @@ export class NPCDialog {
     private visible = false;
 
     constructor(scene: Phaser.Scene) {
-        this.scene = scene;
-
         // Grab the main camera so we can position the dialog relative to its size.
         const cam = scene.cameras.main;
 
