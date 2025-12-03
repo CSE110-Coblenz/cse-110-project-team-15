@@ -39,8 +39,6 @@ export class MainScene extends Phaser.Scene {
     } | null = null;
 
     // (Old fields; NPC is now wrapped in the NPC class, but we keep these around if needed.)
-    private npcSprite!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-    private npcPrompt!: Phaser.GameObjects.Text;
 
 
     // WASD keys for movement.
@@ -66,15 +64,11 @@ export class MainScene extends Phaser.Scene {
     private npcDialog!: NPCDialog;
 
 
-    private hasSavedQuadraticHint = false;
-
     private hintBlocksManager!: HintBlocksManager;
 
     private footstepSound!: Phaser.Sound.BaseSound;
 
     private doorCollisionManager!: DoorCollisionManager;
-
-    private doorPuzzleManager!: DoorPuzzleManager;
 
     private unexploredLayers: Record<number, Phaser.Tilemaps.TilemapLayer | null> = {};
 
@@ -131,12 +125,12 @@ export class MainScene extends Phaser.Scene {
 
         // --------- BACKGROUND LAYERS (drawn back-to-front) ---------
         // These layers are purely visual layering; they are not collidable.
-        const bgBase    = map.createLayer("Background/Background", tileset, 0, 0);
-        const wallOvl   = map.createLayer("Background/Wall Overlay", tileset, 0, 0);
-        const floorOvl  = map.createLayer("Background/Floor Overlay", tileset, 0, 0);
-        const furnBack  = map.createLayer("Background/Furniture Back", tileset, 0, 0);
-        const furnFront = map.createLayer("Background/Furniture Front", tileset, 0, 0);
-        const front     = map.createLayer("Background/Front", tileset, 0, 0);
+        map.createLayer("Background/Background", tileset, 0, 0);
+        map.createLayer("Background/Wall Overlay", tileset, 0, 0);
+        map.createLayer("Background/Floor Overlay", tileset, 0, 0);
+        map.createLayer("Background/Furniture Back", tileset, 0, 0);
+        map.createLayer("Background/Furniture Front", tileset, 0, 0);
+        map.createLayer("Background/Front", tileset, 0, 0);
 
         // --------- UNEXPLORED LAYERS (fog-of-war style) ---------
         // These are currently always visible, but the structure lets us toggle them
@@ -230,7 +224,7 @@ export class MainScene extends Phaser.Scene {
             },
         };
 
-        this.doorPuzzleManager = new DoorPuzzleManager(
+        new DoorPuzzleManager(
             this,
             this.npcDialog,
             this.doorCollisionManager,
