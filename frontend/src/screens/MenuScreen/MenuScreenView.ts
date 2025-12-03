@@ -1,6 +1,6 @@
 import Konva from "konva";
 import type { View } from "../../types.ts";
-import { STAGE_WIDTH } from "../../constants.ts";
+import { STAGE_HEIGHT, STAGE_WIDTH } from "../../constants.ts";
 
 /**
  * MenuScreenView - Renders the menu screen
@@ -10,6 +10,30 @@ export class MenuScreenView implements View {
 
 	constructor(onStartClick: () => void) {
 		this.group = new Konva.Group({ visible: true });
+
+		// Menu screen background
+		Konva.Image.fromURL("/menuscreen_icon.jpg", (image) => {
+			image.width(STAGE_WIDTH);
+			image.height(STAGE_HEIGHT);
+			image.x(0);
+			image.y(0);
+
+			this.group.add(image);
+			image.moveToBottom()
+			this.group.getLayer()?.draw();
+		});
+
+		// Background banner behind title
+		const titleBg = new Konva.Rect({
+    		x: STAGE_WIDTH / 2 - 387.5,
+    		y: 130,
+    		width: 775,
+    		height: 100,
+    		fill: "white",
+			opacity: 0.6,
+    		cornerRadius: 20,
+		});
+		this.group.add(titleBg);
 
 		// Title text
 		const title = new Konva.Text({
@@ -49,11 +73,25 @@ export class MenuScreenView implements View {
 		});
 		startText.offsetX(startText.width() / 2);
 
+		// Start button group
 		const startButtonGroup = new Konva.Group();
 		startButtonGroup.add(startButton);
 		startButtonGroup.add(startText);
 		startButtonGroup.on("click", onStartClick);
 		this.group.add(startButtonGroup);
+
+		// Start button hover effects
+		startButtonGroup.on("mouseenter", () => {
+    	document.body.style.cursor = "pointer";
+    	startButton.fill("maroon"); // darker red
+    	this.group.getLayer()?.draw();
+		});
+
+		startButtonGroup.on("mouseleave", () => {
+    	document.body.style.cursor = "default";
+    	startButton.fill("darkred");
+    	this.group.getLayer()?.draw();
+		});
 	}
 
 	/**
