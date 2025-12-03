@@ -6,7 +6,7 @@ from models.sync import SyncResponse
 
 game_sync_router = APIRouter(tags=["game"])
 
-@game_sync_router.get("/game/sync", response_model=SyncResponse)
+@game_sync_router.get("/game/sync")
 async def handle_data_sync(
     user_id: int = Depends(get_current_user),
     connection: asyncpg.Connection = Depends(get_db_connection)
@@ -28,4 +28,4 @@ async def handle_data_sync(
     else:
         game_data = game_data_json
 
-    return SyncResponse(**game_data)
+    return game_data
