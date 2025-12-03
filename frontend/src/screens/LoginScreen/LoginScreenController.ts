@@ -20,10 +20,10 @@ export class LoginScreenController extends ScreenController {
         try {
             const res = await api.login(user, pass);
             if (res.ok) {
-                // proceed to menu on success
+                // Proceed to menu on success
                 this.screenSwitcher.switchToScreen({ type: "menu" });
             } else {
-                // show error on view
+                // Show error on view
                 this.view.showMessage(res.message || "Login failed");
             }
         } catch (e) {
@@ -34,8 +34,8 @@ export class LoginScreenController extends ScreenController {
     private handleGuest(): void {
         // Play as guest: no backend session. Warn user saves will not persist.
         this.view.showMessage("Playing as guest — progress will not be saved to your account.");
-        // short delay then switch to menu
-        setTimeout(() => this.screenSwitcher.switchToScreen({ type: "menu" }), 800);
+        // A short delay then switch to menu
+        setTimeout(() => this.screenSwitcher.switchToScreen({ type: "menu" }), 3000);
     }
 
     getView(): LoginScreenView {
