@@ -57,7 +57,6 @@ async def handle_login_request(
             "DELETE FROM session WHERE user_id = $1",
             user_id,
         )
-        
         await connection.execute(
             """
             INSERT INTO session (user_id, session_id, time_expire)
