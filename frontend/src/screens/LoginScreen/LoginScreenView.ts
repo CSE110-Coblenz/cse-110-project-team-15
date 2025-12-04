@@ -7,7 +7,7 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
  */
 export class LoginScreenView implements View {
     private group: Konva.Group;
-    private containerEl: HTMLElement | null = null;
+
     private overlayEl: HTMLDivElement | null = null;
 
     constructor(onLogin: (user: string, pass: string) => void, onGuest: () => void) {

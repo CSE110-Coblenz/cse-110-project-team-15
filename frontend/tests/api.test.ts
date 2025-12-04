@@ -203,4 +203,27 @@ describe("API Client", () => {
             expect(res.ok).toBe(true);
         }
     });
+    it("should logout a user", async () => {
+        if (!IS_LIVE) {
+            const mockResponse = { ok: true, message: "Logged out" };
+            (globalThis.fetch as any).mockResolvedValue({
+                json: async () => mockResponse,
+            });
+        }
+
+        const res = await api.logout();
+
+        if (!IS_LIVE) {
+            expect(globalThis.fetch).toHaveBeenCalledWith(
+                `${API_URL}/logout`,
+                expect.objectContaining({
+                    method: "POST",
+                    credentials: "include",
+                })
+            );
+            expect(res).toEqual({ ok: true, message: "Logged out" });
+        } else {
+            expect(res.ok).toBe(true);
+        }
+    });
 });

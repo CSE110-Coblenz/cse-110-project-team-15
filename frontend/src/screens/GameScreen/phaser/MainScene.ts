@@ -150,4 +150,21 @@ export class MainScene extends Phaser.Scene {
             this.player.anims.stop();
         }
     }
+
+    getPlayerState(): { x: number; y: number } {
+        if (this.player) {
+            return {
+                x: this.player.x,
+                y: this.player.y,
+            };
+        }
+        return { x: 0, y: 0 };
+    }
+
+    setPlayerState(state: { x: number; y: number }): void {
+        if (this.player) {
+            this.player.setPosition(state.x, state.y);
+        }
+    }
 }
+

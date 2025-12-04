@@ -74,4 +74,12 @@ export const api = {
         });
         return res.json();
     },
+
+    async logout(): Promise<ApiResponse> {
+        const res = await fetch(`${API_URL}/logout`, {
+            method: "POST",
+            credentials: "include",
+        });
+        return res.json();
+    },
 };
