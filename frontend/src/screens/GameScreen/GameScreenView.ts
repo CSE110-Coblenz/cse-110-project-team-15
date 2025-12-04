@@ -114,8 +114,16 @@ export class GameScreenView implements View {
 				},
 			});
 
+
 			//notebook setup
 			this.notebook = new NotebookController(this.group);
+
+
+			if (this.phaserGame) {
+				this.phaserGame.events.on("hint-found", (hint: string) => {
+					this.notebook.addHint(hint);
+				});
+			}
 
 			//hook notebook visivility -> phaser visibility
 			this.notebook.onVisibilityChange((visible) => {

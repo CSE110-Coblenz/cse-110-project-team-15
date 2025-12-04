@@ -6,6 +6,7 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../../src/constants.ts";
  */
 export class NotebookView {
     // Notebook elements
+    // Notebook elements
     private group: Konva.Group;
     private parentGroup: Konva.Group;
     private pageText: Konva.Text;
@@ -32,7 +33,7 @@ export class NotebookView {
             image.x(STAGE_WIDTH / 2 - 380);
             image.y(STAGE_HEIGHT - 80);
             image.on("click", () => this.onToggle());
-            
+
             // Notebook icon hover effects
             image.on("mouseenter", () => {
                 document.body.style.cursor = "pointer";
@@ -44,7 +45,6 @@ export class NotebookView {
                 image.opacity(1);
                 this.parentGroup.getLayer()?.draw();
             });
-
             this.parentGroup.add(image);
             this.parentGroup.getLayer()?.draw();
         });
@@ -69,7 +69,7 @@ export class NotebookView {
         const tabs = ["Clues", "Hints", "Lessons"];
         tabs.forEach((tab, i) => {
             const isDefault = i === 0;
-            
+
             const tabRect = new Konva.Rect({
                 x: 130 + i * 120,
                 y: 60,
@@ -141,7 +141,7 @@ export class NotebookView {
             fontFamily: "serif",
         });
         closeButton.on("click", () => this.onToggle());
-        
+
         // Close button hover effects
         closeButton.on("mouseenter", () => {
             document.body.style.cursor = "pointer";
