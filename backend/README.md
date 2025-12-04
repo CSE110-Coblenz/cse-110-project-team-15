@@ -43,6 +43,7 @@ backend/
 │   └── update.py
 ├── routers/              # API endpoint handlers
 │   ├── login.py
+│   ├── logout.py
 │   ├── register.py
 │   ├── delete.py
 │   ├── data.py
@@ -52,7 +53,8 @@ backend/
 │   └── saves.py
 └── tests/               # Integration tests
     ├── conftest.py      # Test fixtures
-    └── test_auth.py     # Auth endpoint tests
+    ├── test_auth.py     # Auth endpoint tests
+    └── test_logout.py   # Logout endpoint tests
 ```
 
 ### Request Flow
@@ -346,6 +348,30 @@ Set-Cookie: access_token=Bearer eyJ...; HttpOnly; SameSite=Lax; Max-Age=1800
 
 ---
 
+#### POST `/logout`
+Invalidate the current session.
+
+**Request**:
+Empty body. Requires authentication (cookie).
+
+**Response** (200 OK):
+```json
+{
+  "ok": true,
+  "message": "Successfully logged out"
+}
+```
+
+**Response** (401 Unauthorized):
+If not logged in or session expired.
+
+**Implementation Details**:
+- Requires valid session cookie
+- Deletes the current session from the database
+- Clears the `access_token` cookie
+
+---
+
 #### DELETE `/delete`
 Delete user account (requires re-authentication).
 
@@ -455,6 +481,21 @@ The `get_current_user` dependency:
 3. Queries database to ensure session is still valid
 4. Returns authenticated `user_id`
 5. Raises 401 if any step fails
+
+---
+
+### System Endpoints
+
+#### GET/HEAD `/health`
+Check API and database status.
+
+**Response** (200 OK):
+```json
+{
+  "ok": true,
+  "db_status": "connected"
+}
+```
 
 ---
 
@@ -747,5 +788,5 @@ When adding features:
 
 ---
 
-**Last Updated**: 2025-11-23  
-**Backend Version**: 1.0.0
+**Last Updated**: 2025-12-03  
+**Backend Version**: 1.1.0
