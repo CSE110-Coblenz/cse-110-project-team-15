@@ -16,7 +16,8 @@ export interface View {
 export type Screen =
 	| { type: "menu" }
 	| { type: "game" }
-	| { type: "pause"};
+	| { type: "pause"}
+	| { type: "login" };
 
 export abstract class ScreenController {
 	abstract getView(): View;

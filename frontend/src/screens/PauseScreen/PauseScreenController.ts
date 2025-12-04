@@ -3,7 +3,7 @@ import type { ScreenSwitcher } from "../../types.ts";
 import { PauseScreenView } from "./PauseScreenView.ts";
 
 /**
- * PauseScreenController - Handles pause scren interactions
+ * PauseScreenController - Handles pause screen interactions
  */
 export class PauseScreenController extends ScreenController {
     private view: PauseScreenView;

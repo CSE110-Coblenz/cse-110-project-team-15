@@ -58,11 +58,24 @@ export class PauseScreenView implements View {
             });
             continueText.offsetX(continueText.width() / 2);
 
+            // Continue group
             const continueGroup = new Konva.Group();
             continueGroup.add(continueButton);
             continueGroup.add(continueText);
             continueGroup.on("click", this.onContinueClick);
             this.group.add(continueGroup);
+
+            // Continue button hover effects
+            continueGroup.on("mouseenter", () => {
+                document.body.style.cursor = "pointer";
+                continueButton.fill("maroon");
+                this.group.getLayer()?.draw();
+            });
+            continueGroup.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+                continueButton.fill("darkred");
+                this.group.getLayer()?.draw();
+            });
     }
     
     /**

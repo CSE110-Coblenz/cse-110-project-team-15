@@ -32,7 +32,6 @@ async def handle_game_save(
                 status_code=500,
                 detail="Failed to save game data"
             )
-
     try:
         await connection.execute(
             '''

@@ -1,12 +1,16 @@
 import Konva from "konva";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "../../../src/constants.ts";
 
+/**
+ * NotebookView - Renders the notebook screen
+ */
 export class NotebookView {
     // Notebook elements
     // Notebook elements
     private group: Konva.Group;
     private parentGroup: Konva.Group;
     private pageText: Konva.Text;
+    private currentTab: string = "Clues";
     private onTabClick: (tab: string) => void;
     private onToggle: () => void;
 
@@ -29,6 +33,19 @@ export class NotebookView {
             image.x(STAGE_WIDTH / 2 - 380);
             image.y(STAGE_HEIGHT - 80);
             image.on("click", () => this.onToggle());
+
+            // Notebook icon hover effects
+            image.on("mouseenter", () => {
+                document.body.style.cursor = "pointer";
+                image.opacity(0.8);
+                this.parentGroup.getLayer()?.draw();
+            });
+            image.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+                image.opacity(1);
+                this.parentGroup.getLayer()?.draw();
+            });
+
             this.parentGroup.add(image);
             this.parentGroup.getLayer()?.draw();
         });
@@ -52,15 +69,18 @@ export class NotebookView {
         // Tabs for notebook
         const tabs = ["Clues", "Hints", "Lessons"];
         tabs.forEach((tab, i) => {
+            const isDefault = i === 0;
+
             const tabRect = new Konva.Rect({
                 x: 130 + i * 120,
                 y: 60,
                 width: 100,
                 height: 40,
-                fill: i === 0 ? "#deb887" : "#f5deb3",
+                fill: isDefault ? "#c5a16b" : "#e9d3a6",
                 stroke: "#8b5a2b",
                 strokeWidth: 2,
                 cornerRadius: 5,
+                name: `tab-${tab}`
             });
             const tabText = new Konva.Text({
                 x: tabRect.x() + 10,
@@ -71,8 +91,29 @@ export class NotebookView {
                 fill: "black",
             });
 
-            tabRect.on("click", () => this.onTabClick(tab));
-            tabText.on("click", () => this.onTabClick(tab));
+            // Tab hover effects
+            tabRect.on("mouseenter", () => {
+                document.body.style.cursor = "pointer";
+                tabRect.fill("#d8bb8a");
+                this.parentGroup.getLayer()?.draw();
+            });
+            tabRect.on("mouseleave", () => {
+                document.body.style.cursor = "default";
+                const isSelected = tab === this.currentTab;
+                tabRect.fill(isSelected ? "#b9915a" : "#e9d3a6");
+                this.parentGroup.getLayer()?.draw();
+            });
+
+            tabRect.on("click", () => {
+                this.currentTab = tab;
+                this.highlightTab(tab);
+                this.onTabClick(tab);
+            });
+            tabText.on("click", () => {
+                this.currentTab = tab;
+                this.highlightTab(tab);
+                this.onTabClick(tab);
+            });
 
             this.group.add(tabRect);
             this.group.add(tabText);
@@ -101,6 +142,19 @@ export class NotebookView {
             fontFamily: "serif",
         });
         closeButton.on("click", () => this.onToggle());
+
+        // Close button hover effects
+        closeButton.on("mouseenter", () => {
+            document.body.style.cursor = "pointer";
+            closeButton.fill("maroon");
+            this.parentGroup.getLayer()?.draw();
+        });
+        closeButton.on("mouseleave", () => {
+            document.body.style.cursor = "default";
+            closeButton.fill("darkred");
+            this.parentGroup.getLayer()?.draw();
+        });
+
         this.group.add(closeButton);
     }
 
@@ -116,5 +170,20 @@ export class NotebookView {
 
     isVisible(): boolean {
         return this.group.visible();
+    }
+
+    private highlightTab(selected: string): void {
+        const allTabs = this.group.find("Rect");
+
+        allTabs.forEach((shape: Konva.Node) => {
+            const rect = shape as Konva.Rect;
+            const name = rect.name();
+            if (name.startsWith("tab-")) {
+                const tabName = name.replace("tab-", "");
+                rect.fill(tabName === selected ? "#b9915a" : "#e9d3a6");
+            }
+        });
+
+        this.parentGroup.getLayer()?.draw();
     }
 }
