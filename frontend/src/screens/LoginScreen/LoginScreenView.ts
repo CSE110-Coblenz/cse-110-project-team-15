@@ -7,10 +7,13 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
  */
 export class LoginScreenView implements View {
     private group: Konva.Group;
-    private containerEl: HTMLElement | null = null;
     private overlayEl: HTMLDivElement | null = null;
 
-    constructor(onLogin: (user: string, pass: string) => void, onGuest: () => void) {
+    constructor(
+        onLogin: (user: string, pass: string) => void,
+        onGuest: () => void,
+        onRegister: (user: string, pass: string) => void
+    ) {
         this.group = new Konva.Group({ visible: true });
 
         // Background (image or solid)
@@ -36,11 +39,15 @@ export class LoginScreenView implements View {
         this.group.add(title);
 
         // Create HTML overlay form
-        this.createHtmlForm(onLogin, onGuest);
+        this.createHtmlForm(onLogin, onGuest, onRegister);
     }
 
     // Create an HTML form overlay for login
-    private createHtmlForm(onLogin: (u: string, p: string) => void, onGuest: () => void) {
+    private createHtmlForm(
+        onLogin: (u: string, p: string) => void,
+        onGuest: () => void,
+        onRegister: (u: string, p: string) => void
+    ) {
         const container = document.getElementById("container");
         if (!container) return;
 
@@ -93,6 +100,8 @@ export class LoginScreenView implements View {
         userInput.style.border = "2px solid maroon";
         userInput.style.borderRadius = "8px";
         userInput.style.fontFamily = "serif";
+        // Stop propagation so Phaser doesn't catch WASD keys
+        userInput.addEventListener("keydown", (e) => e.stopPropagation());
         card.appendChild(userInput);
 
         const passInput = document.createElement("input");
@@ -104,6 +113,8 @@ export class LoginScreenView implements View {
         passInput.style.border = "2px solid maroon";
         passInput.style.borderRadius = "8px";
         passInput.style.fontFamily = "serif";
+        // Stop propagation so Phaser doesn't catch WASD keys
+        passInput.addEventListener("keydown", (e) => e.stopPropagation());
         card.appendChild(passInput);
 
         // Buttons row
@@ -127,6 +138,17 @@ export class LoginScreenView implements View {
         guestBtn.onclick = () => onGuest();
 
         btnRow.appendChild(loginBtn);
+
+        const registerBtn = document.createElement("button");
+        registerBtn.textContent = "Register";
+        registerBtn.style.flex = "1";
+        this.styleButton(registerBtn);
+        registerBtn.onclick = () => {
+            msg.textContent = "";
+            onRegister(userInput.value, passInput.value);
+        };
+        btnRow.appendChild(registerBtn);
+
         btnRow.appendChild(guestBtn);
         card.appendChild(btnRow);
 
