@@ -21,6 +21,12 @@ export class NotebookController {
         );
         this.updateView();
     }
+    
+
+    public addHint(hint: string): void {
+        this.model.addHint(hint);
+        this.updateView();
+    }
 
     /*
      * Allow other code(GameScreenView) to react when the notebook is opened/closed
@@ -36,6 +42,7 @@ export class NotebookController {
         this.model.setActiveTab(tab);
         this.updateView();
     }
+    
 
     /*
      * Toggles the notebook visibility
