@@ -174,7 +174,9 @@ export class LoginScreenView implements View {
         btn.onmouseleave = () => (btn.style.background = "darkred");
     }
 
-    /** Show error or info messages inside the card */
+    /** 
+     * Show error or info messages inside the account login card 
+     */
     showMessage(text: string) {
         if (!this.overlayEl) return;
         const msg = this.overlayEl.querySelector("div");
