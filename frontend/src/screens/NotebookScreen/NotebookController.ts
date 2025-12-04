@@ -2,6 +2,9 @@ import Konva from "konva";
 import { NotebookModel } from "./NotebookModel.ts";
 import { NotebookView } from "./NotebookView.ts";
 
+/**
+ * NotebookController - Handles notebook interactions
+ */
 export class NotebookController {
     private model: NotebookModel;
     private view: NotebookView;
