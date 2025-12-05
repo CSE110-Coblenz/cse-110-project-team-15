@@ -8,9 +8,9 @@ import { NotebookView } from "./NotebookView.ts";
 export class NotebookController {
     private model: NotebookModel;
     private view: NotebookView;
-    
+
     //adding a listener system
-    private visibilityListeners: ((visible:boolean) => void)[] = [];
+    private visibilityListeners: ((visible: boolean) => void)[] = [];
 
     constructor(parentGroup: Konva.Group) {
         this.model = new NotebookModel();
@@ -51,7 +51,7 @@ export class NotebookController {
         const isVisible = this.view.isVisible();
         const newVisible = !isVisible;
         this.view.setVisible(!isVisible);
-        
+
         for (const listener of this.visibilityListeners) {
             listener(newVisible);
         }
@@ -62,5 +62,14 @@ export class NotebookController {
      */
     private updateView(): void {
         this.view.updatePage(this.model.getContent());
+    }
+
+    getNotebookState(): { clues: string[]; hints: string[]; lessons: string[] } {
+        return this.model.getState();
+    }
+
+    setNotebookState(state: { clues: string[]; hints: string[]; lessons: string[] }): void {
+        this.model.setState(state);
+        this.updateView();
     }
 }

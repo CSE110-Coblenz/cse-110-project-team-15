@@ -8,6 +8,7 @@ from routers.health import health_router
 
 from routers.register import register_router
 from routers.login import login_router
+from routers.logout import logout_router
 from routers.delete import delete_router
 
 from routers.sync import game_sync_router
@@ -39,6 +40,7 @@ app.include_router(health_router)
 # app.include_router(user_router)
 app.include_router(register_router)
 app.include_router(login_router)
+app.include_router(logout_router)
 app.include_router(delete_router)
 # app.include_router(data_router)
 app.include_router(game_update_router)

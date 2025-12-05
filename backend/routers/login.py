@@ -52,6 +52,11 @@ async def handle_login_request(
 
     # Save session to DB
     try:
+        # Enforce single session: Delete existing sessions for this user
+        await connection.execute(
+            "DELETE FROM session WHERE user_id = $1",
+            user_id,
+        )
         await connection.execute(
             """
             INSERT INTO session (user_id, session_id, time_expire)

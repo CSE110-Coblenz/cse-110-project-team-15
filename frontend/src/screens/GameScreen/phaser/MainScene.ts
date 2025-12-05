@@ -51,7 +51,7 @@ export class MainScene extends Phaser.Scene {
 
     // Whether player is currently inside interaction radius of the NPC.
     private canTalkToNpc = false;
-    
+
 
     // UI dialog box anchored to the camera (bottom of screen).
     private npcDialog!: NPCDialog;
@@ -89,7 +89,7 @@ export class MainScene extends Phaser.Scene {
         // Tiled map JSON exported from Tiled.
         this.load.tilemapTiledJSON("map", "/assets/map.json");
 
-        
+
 
         // NPC spritesheet; smaller 32x32 sprite with its own idle animation.
         this.load.spritesheet("npc", "/assets/character3.png", {
@@ -176,7 +176,7 @@ export class MainScene extends Phaser.Scene {
         // ============================================
 
         const doorConfigs: DoorCollisionConfig[] = [
-            { id: 1, x: 192, y: 368, roomName: "Room 1: Guest Room"},
+            { id: 1, x: 192, y: 368, roomName: "Room 1: Guest Room" },
             { id: 2, x: 384, y: 368, roomName: "Room 2: Unknown" },
             { id: 3, x: 624, y: 512, roomName: "Room 3: Library" },
             { id: 4, x: 928, y: 448, roomName: "Room 4: Office" },
@@ -238,7 +238,7 @@ export class MainScene extends Phaser.Scene {
         // ============================================
         // Spawn the player as a physics-enabled sprite. The frame index 0 is the idle frame.
         this.player = this.physics.add.sprite(200, 200, "player", 0);
-        
+
         // Set a high depth so the player draws above most background layers.
         this.player.setDepth(10);
 
@@ -256,11 +256,11 @@ export class MainScene extends Phaser.Scene {
         const offsetX = (this.player.width - hitWidth) / 2;
         const offsetY = 34; // Tweak by hand until it "feels" like it's at the feet.
         body.setOffset(offsetX, offsetY);
-        
+
 
         // Make the camera continuously follow the player as they move.
         this.cameras.main.startFollow(this.player);
-        
+
 
         // Enable collision between the player and the hidden collision layer.
         this.physics.add.collider(this.player, collision!);
@@ -294,7 +294,7 @@ export class MainScene extends Phaser.Scene {
             repeat: -1,
         });
 
-        
+
 
         // ============================================
         //  Footstep sound
@@ -464,7 +464,7 @@ export class MainScene extends Phaser.Scene {
         this.player.setVelocity(vx, vy);
         // If the player is moving
 
-        
+
         const isMoving = vx !== 0 || vy !== 0;
 
         if (isMoving) {
@@ -496,12 +496,20 @@ export class MainScene extends Phaser.Scene {
 
     }
 
-    /**
-     * useDoor
-     *
-     * This method is called when the player presses E while overlapping
-     * a door zone. Right now you can decide what to do based on doorId
-     * and doorMetaById (for example, load a puzzle, transition rooms,
-     * show "door is locked", etc.)
-     */
+    getPlayerState(): { x: number; y: number } {
+        if (this.player) {
+            return {
+                x: this.player.x,
+                y: this.player.y,
+            };
+        }
+        return { x: 0, y: 0 };
+    }
+
+    setPlayerState(state: { x: number; y: number }): void {
+        if (this.player) {
+            this.player.setPosition(state.x, state.y);
+        }
+    }
 }
+
