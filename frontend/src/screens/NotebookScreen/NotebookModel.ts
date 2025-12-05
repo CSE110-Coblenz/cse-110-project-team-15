@@ -1,3 +1,6 @@
+/**
+ * NotebookModel - Manages notebook state
+ */
 export class NotebookModel {
     private clues: string[] = [];
     private hints: string[] = [];

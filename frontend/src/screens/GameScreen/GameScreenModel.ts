@@ -1,5 +1,3 @@
-// DO NOT MODIFY. Will be used for updating game state
-
 /**
  * GameScreenModel - Manages game state
  */
