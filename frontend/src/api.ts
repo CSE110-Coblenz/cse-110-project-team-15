@@ -1,4 +1,5 @@
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// In development, use relative path to leverage Vite proxy. In production, use the env var.
+export const API_URL = import.meta.env.DEV ? "" : (import.meta.env.VITE_API_URL || "");
 console.log("API_URL configured as:", API_URL);
 
 export interface ApiResponse {
