@@ -111,6 +111,10 @@ export class GameScreenController extends ScreenController {
 	async loadGame(): Promise<void> {
 		try {
 			const data = await api.syncGame();
+			if (!data) {
+				console.log("No saved game found. Starting fresh.");
+				return;
+			}
 			console.log("Game loaded:", data);
 
 			const mainScene = this.view.getMainScene();
