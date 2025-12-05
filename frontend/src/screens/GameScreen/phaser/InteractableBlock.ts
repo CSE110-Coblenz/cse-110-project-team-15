@@ -15,7 +15,7 @@ export class InteractableBlock {
     ) {
         this.onInteract = onInteract;
 
-        this.rect = scene.add.rectangle(x, y, 24, 24, 0x3a86ff, 1);
+        this.rect = scene.add.rectangle(x, y, 24, 24, 0x3a86ff, 0);
         this.rect.setOrigin(0.5);
         this.rect.setDepth(5);
 

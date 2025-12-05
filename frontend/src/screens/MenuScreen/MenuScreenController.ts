@@ -8,10 +8,12 @@ import { MenuScreenView } from "./MenuScreenView.ts";
 export class MenuScreenController extends ScreenController {
 	private view: MenuScreenView;
 	private screenSwitcher: ScreenSwitcher;
+	private onStartGame: () => void;
 
-	constructor(screenSwitcher: ScreenSwitcher) {
+	constructor(screenSwitcher: ScreenSwitcher, onStartGame: () => void) {
 		super();
 		this.screenSwitcher = screenSwitcher;
+		this.onStartGame = onStartGame;
 		this.view = new MenuScreenView(() => this.handleStartClick());
 	}
 
@@ -19,6 +21,7 @@ export class MenuScreenController extends ScreenController {
 	 * Handle start button click
 	 */
 	private handleStartClick(): void {
+		this.onStartGame();
 		this.screenSwitcher.switchToScreen({ type: "game" });
 	}
 

@@ -154,6 +154,8 @@ Communication with the backend is handled by `src/api.ts`.
 ### Configuration
 The API URL is configured via environment variables:
 - `VITE_API_URL`: Defaults to `http://localhost:8000`.
+  - To change this, create a `.env` file in the project root with `VITE_API_URL=your_url_here` or set the environment variable in your shell.
+  - Example: `VITE_API_URL=https://my-api.com`
 
 ### API Client (`api.ts`)
 Provides typed methods for all backend endpoints:

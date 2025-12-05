@@ -486,7 +486,6 @@ The `get_current_user` dependency:
 
 ---
 
-<<<<<<< HEAD
 ### System Endpoints
 
 #### GET/HEAD `/health`
@@ -502,8 +501,6 @@ Check API and database status.
 
 ---
 
-=======
->>>>>>> origin/backend
 ## Core Components
 
 ### `main.py` - Application Entry Point
@@ -793,10 +790,5 @@ When adding features:
 
 ---
 
-<<<<<<< HEAD
 **Last Updated**: 2025-12-03  
 **Backend Version**: 1.1.0
-=======
-**Last Updated**: 2025-11-23  
-**Backend Version**: 1.0.0
->>>>>>> origin/backend
