@@ -108,8 +108,8 @@ export class GameScreenView implements View {
 				physics: {
 					default: "arcade",
 					arcade: {
-						debug: true,
-						gravity: { x: 0, y: 0 }
+						debug: false,
+						gravity: {x:0, y:0}
 					},
 				},
 			});

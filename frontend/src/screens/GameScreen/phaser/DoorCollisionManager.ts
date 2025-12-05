@@ -33,7 +33,7 @@ export class DoorCollisionManager {
         configs.forEach((cfg) => {
             // Create collision rectangle
             // Using alpha 0.3 for debugging - change to 0 for production
-            const rect = scene.add.rectangle(cfg.x, cfg.y, 32, 16, 0xff0000, 0.3);
+            const rect = scene.add.rectangle(cfg.x, cfg.y, 32, 16, 0xff0000, 0);
             rect.setOrigin(0.5, 1);
             rect.setDepth(5);
 
