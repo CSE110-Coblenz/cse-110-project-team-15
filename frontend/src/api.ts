@@ -1,4 +1,6 @@
-export const API_URL = import.meta.env.VITE_API_URL;
+// Runtime config from env-config.js (Docker) or build-time env (Local)
+const runtimeUrl = (window as any).env?.VITE_API_URL;
+export const API_URL = (runtimeUrl || import.meta.env.VITE_API_URL);
 console.log("API_URL configured as:", API_URL);
 
 export interface ApiResponse {
