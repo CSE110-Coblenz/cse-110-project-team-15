@@ -1,4 +1,8 @@
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// Runtime config from env-config.js (Docker) or build-time env (Local)
+const isBrowser = typeof window !== "undefined";
+const runtimeUrl = isBrowser ? (window as any).env?.VITE_API_URL : undefined;
+export const API_URL = (runtimeUrl || import.meta.env.VITE_API_URL);
+console.log("API_URL configured as:", API_URL);
 
 export interface ApiResponse {
     ok: boolean;
@@ -49,8 +53,9 @@ export const api = {
         return res.json();
     },
 
-    async syncGame(): Promise<SyncResponse> {
+    async syncGame(): Promise<SyncResponse | null> {
         const res = await fetch(`${API_URL}/game/sync`, { credentials: "include" });
+        if (res.status === 404) return null;
         if (!res.ok) throw new Error("Failed to sync game");
         return res.json();
     },
@@ -70,6 +75,14 @@ export const api = {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user, pass }),
+            credentials: "include",
+        });
+        return res.json();
+    },
+
+    async logout(): Promise<ApiResponse> {
+        const res = await fetch(`${API_URL}/logout`, {
+            method: "POST",
             credentials: "include",
         });
         return res.json();

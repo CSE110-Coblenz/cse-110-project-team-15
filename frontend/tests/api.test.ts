@@ -174,8 +174,11 @@ describe("API Client", () => {
                 npc: [],
             });
         } else {
-            expect(res.location).toBeDefined();
-            expect(res.location.room).toBe("Start");
+            expect(res).not.toBeNull();
+            if (res) {
+                expect(res.location).toBeDefined();
+                expect(res.location.room).toBe("Start");
+            }
         }
     });
 
@@ -199,6 +202,29 @@ describe("API Client", () => {
                 })
             );
             expect(res).toEqual({ ok: true });
+        } else {
+            expect(res.ok).toBe(true);
+        }
+    });
+    it("should logout a user", async () => {
+        if (!IS_LIVE) {
+            const mockResponse = { ok: true, message: "Logged out" };
+            (globalThis.fetch as any).mockResolvedValue({
+                json: async () => mockResponse,
+            });
+        }
+
+        const res = await api.logout();
+
+        if (!IS_LIVE) {
+            expect(globalThis.fetch).toHaveBeenCalledWith(
+                `${API_URL}/logout`,
+                expect.objectContaining({
+                    method: "POST",
+                    credentials: "include",
+                })
+            );
+            expect(res).toEqual({ ok: true, message: "Logged out" });
         } else {
             expect(res.ok).toBe(true);
         }

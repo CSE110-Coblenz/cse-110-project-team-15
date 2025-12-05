@@ -76,25 +76,25 @@ export class GameScreenView implements View {
 
 		// Pause button hover effects
 		pauseGroup.on("mouseenter", () => {
-    		document.body.style.cursor = "pointer";
-    		pauseButton.fill("maroon");
-    		this.group.getLayer()?.draw();
+			document.body.style.cursor = "pointer";
+			pauseButton.fill("maroon");
+			this.group.getLayer()?.draw();
 		});
 		pauseGroup.on("mouseleave", () => {
-    		document.body.style.cursor = "default";
-    		pauseButton.fill("darkred");
-    		this.group.getLayer()?.draw();
+			document.body.style.cursor = "default";
+			pauseButton.fill("darkred");
+			this.group.getLayer()?.draw();
 		});
 
 		//Find the root container that Konva is using
 		const root = document.getElementById("container")
 
-		if(root){
+		if (root) {
 			//create a div for phaser
 			const phaserDiv = document.createElement("div");
 			phaserDiv.id = "phaser-container";
 			phaserDiv.style.display = "none";
-			document.body.appendChild(phaserDiv); 
+			document.body.appendChild(phaserDiv);
 
 			this.phaserContainer = phaserDiv;
 
@@ -102,27 +102,35 @@ export class GameScreenView implements View {
 			this.phaserGame = new Phaser.Game({
 				type: Phaser.AUTO,
 				width: 600,
-				height:450,
+				height: 450,
 				parent: phaserDiv,
 				scene: [MainScene],
-				physics:{
+				physics: {
 					default: "arcade",
 					arcade: {
-						debug: true,
+						debug: false,
 						gravity: {x:0, y:0}
 					},
 				},
 			});
 
+
 			//notebook setup
 			this.notebook = new NotebookController(this.group);
 
+
+			if (this.phaserGame) {
+				this.phaserGame.events.on("hint-found", (hint: string) => {
+					this.notebook.addHint(hint);
+				});
+			}
+
 			//hook notebook visivility -> phaser visibility
 			this.notebook.onVisibilityChange((visible) => {
-				if(visible){
+				if (visible) {
 					this.phaserContainer!.style.display = "none";
 					this.phaserGame!.scene.pause("MainScene");
-				}else{
+				} else {
 					this.phaserContainer!.style.display = "block";
 					this.phaserGame!.scene.resume("MainScene");
 				}
@@ -139,7 +147,7 @@ export class GameScreenView implements View {
 		this.group.visible(true);
 		this.group.getLayer()?.draw();
 
-		if (this.phaserContainer){
+		if (this.phaserContainer) {
 			this.phaserContainer.style.display = "block";
 		}
 	}
@@ -151,12 +159,23 @@ export class GameScreenView implements View {
 		this.group.visible(false);
 		this.group.getLayer()?.draw();
 
-		if (this.phaserContainer){
+		if (this.phaserContainer) {
 			this.phaserContainer.style.display = "none";
 		}
 	}
 
 	getGroup(): Konva.Group {
 		return this.group;
+	}
+
+	getNotebookController(): NotebookController {
+		return this.notebook;
+	}
+
+	getMainScene(): MainScene | undefined {
+		if (this.phaserGame && this.phaserGame.scene) {
+			return this.phaserGame.scene.getScene("MainScene") as MainScene;
+		}
+		return undefined;
 	}
 }

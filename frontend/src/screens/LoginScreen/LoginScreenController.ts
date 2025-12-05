@@ -12,8 +12,22 @@ export class LoginScreenController extends ScreenController {
         this.screenSwitcher = screenSwitcher;
         this.view = new LoginScreenView(
             (username: string, password: string) => this.handleLogin(username, password),
-            () => this.handleGuest()
+            () => this.handleGuest(),
+            (username: string, password: string) => this.handleRegister(username, password)
         );
+    }
+
+    private async handleRegister(user: string, pass: string): Promise<void> {
+        try {
+            const res = await api.register(user, pass);
+            if (res.ok) {
+                this.view.showMessage("Registration successful! Please log in.");
+            } else {
+                this.view.showMessage(res.message || "Registration failed");
+            }
+        } catch (e) {
+            this.view.showMessage("Network error during registration");
+        }
     }
 
     private async handleLogin(user: string, pass: string): Promise<void> {
