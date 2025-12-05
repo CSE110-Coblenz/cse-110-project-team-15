@@ -1,3 +1,4 @@
+import json
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -24,7 +25,7 @@ class Settings(BaseSettings):
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
         elif isinstance(v, (list, str)):
-            return v
+            return json.loads(v) if isinstance(v, str) else v
         raise ValueError(v)
 
 settings = Settings()
