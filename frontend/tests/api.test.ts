@@ -174,8 +174,11 @@ describe("API Client", () => {
                 npc: [],
             });
         } else {
-            expect(res.location).toBeDefined();
-            expect(res.location.room).toBe("Start");
+            expect(res).not.toBeNull();
+            if (res) {
+                expect(res.location).toBeDefined();
+                expect(res.location.room).toBe("Start");
+            }
         }
     });
 
