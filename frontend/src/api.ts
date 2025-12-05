@@ -1,5 +1,11 @@
 // In development, use relative path to leverage Vite proxy. In production or non-browser environments (like Node tests), use the env var.
 const isBrowser = typeof window !== "undefined";
+console.log("Environment Debug:", {
+    DEV: import.meta.env.DEV,
+    isBrowser,
+    VITE_API_URL: import.meta.env.VITE_API_URL,
+    MODE: import.meta.env.MODE
+});
 export const API_URL = (import.meta.env.DEV && isBrowser) ? "" : (import.meta.env.VITE_API_URL || "http://localhost:8000");
 console.log("API_URL configured as:", API_URL);
 
