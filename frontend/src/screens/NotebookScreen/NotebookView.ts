@@ -45,6 +45,7 @@ export class NotebookView {
                 image.opacity(1);
                 this.parentGroup.getLayer()?.draw();
             });
+
             this.parentGroup.add(image);
             this.parentGroup.getLayer()?.draw();
         });

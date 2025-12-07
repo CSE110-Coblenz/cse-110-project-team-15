@@ -5,6 +5,7 @@ import { LoginScreenController } from "./screens/LoginScreen/LoginScreenControll
 import { GameScreenController } from "./screens/GameScreen/GameScreenController.ts";
 import { PauseScreenController } from "./screens/PauseScreen/PauseScreenController.ts";
 import { STAGE_WIDTH, STAGE_HEIGHT } from "./constants.ts";
+import { api } from "./api.ts";
 
 /**
  * Main Application - Coordinates all screens
@@ -39,10 +40,17 @@ class App implements ScreenSwitcher {
 
 		// Initialize all screen controllers
 		// Each controller manages a Model, View, and handles user interactions
-		this.menuController = new MenuScreenController(this);
+		this.menuController = new MenuScreenController(
+			this,
+			() => this.gameController.loadGame()
+		);
 		this.loginController = new LoginScreenController(this);
 		this.gameController = new GameScreenController(this);
-		this.pauseController = new PauseScreenController(this);
+		this.pauseController = new PauseScreenController(
+			this,
+			() => this.gameController.saveGame(),
+			() => this.handleLogout()
+		);
 
 		// Add all screen groups to the layer
 		// All screens exist simultaneously but only one is visible at a time
@@ -56,6 +64,20 @@ class App implements ScreenSwitcher {
 
 		// Start with login screen visible
 		this.loginController.getView().show();
+	}
+
+	/**
+	 * Handle user logout
+	 */
+	async handleLogout(): Promise<void> {
+		try {
+			await this.gameController.saveGame(true); // Silent save
+			await api.logout();
+			this.switchToScreen({ type: "login" });
+		} catch (err) {
+			console.error("Logout failed:", err);
+			this.switchToScreen({ type: "login" });
+		}
 	}
 
 	/**
@@ -81,6 +103,8 @@ class App implements ScreenSwitcher {
 				break;
 			case "menu":
 				this.menuController.show();
+				// Load game data when entering the menu (after login)
+				this.gameController.loadGame();
 				break;
 
 			case "game":

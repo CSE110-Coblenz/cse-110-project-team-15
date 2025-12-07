@@ -42,7 +42,7 @@ export class NotebookModel {
                 return "No hints yet.";
             }
         }
-        
+
         if (this.activeTab == "Lessons") {
             if (this.lessons.length > 0) {
                 return this.lessons.join("\n");
@@ -76,4 +76,17 @@ export class NotebookModel {
         this.lessons.push(lessonLearned);
     }
 
-} 
+    getState(): { clues: string[]; hints: string[]; lessons: string[] } {
+        return {
+            clues: [...this.clues],
+            hints: [...this.hints],
+            lessons: [...this.lessons],
+        };
+    }
+
+    setState(state: { clues: string[]; hints: string[]; lessons: string[] }): void {
+        this.clues = state.clues || [];
+        this.hints = state.hints || [];
+        this.lessons = state.lessons || [];
+    }
+}

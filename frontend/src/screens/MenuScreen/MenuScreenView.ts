@@ -83,7 +83,7 @@ export class MenuScreenView implements View {
 		// Start button hover effects
 		startButtonGroup.on("mouseenter", () => {
     		document.body.style.cursor = "pointer";
-    		startButton.fill("maroon"); // darker red
+    		startButton.fill("maroon");
     		this.group.getLayer()?.draw();
 		});
 		startButtonGroup.on("mouseleave", () => {

@@ -8,76 +8,86 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
 export class PauseScreenView implements View {
     private group: Konva.Group;
     private onContinueClick: () => void;
+    private onSaveClick: () => void;
+    private onLogoutClick: () => void;
 
-    constructor(onContinueClick: () => void) {
-            this.group = new Konva.Group({ visible: false });
-            this.onContinueClick = onContinueClick;
+    constructor(onContinueClick: () => void, onSaveClick: () => void, onLogoutClick: () => void) {
+        this.group = new Konva.Group({ visible: false });
+        this.onContinueClick = onContinueClick;
+        this.onSaveClick = onSaveClick;
+        this.onLogoutClick = onLogoutClick;
 
-            // Background
-            const bg = new Konva.Rect({
-                x: 0,
-                y: 0,
-                width: STAGE_WIDTH,
-                height: STAGE_HEIGHT,
-                fill: "#fffbea",
-            });
-            this.group.add(bg);
+        // Background
+        const bg = new Konva.Rect({
+            x: 0,
+            y: 0,
+            width: STAGE_WIDTH,
+            height: STAGE_HEIGHT,
+            fill: "#fffbea",
+        });
+        this.group.add(bg);
 
-            // "Paused" text
-            const pausedText = new Konva.Text({
-                x: STAGE_WIDTH / 2,
-                y: STAGE_HEIGHT / 2 - 100,
-                text: "Game Paused",
-                fontSize: 50,
-                fontFamily: "serif",
-                fill: "darkRed",
-                align: "center",
-            });
-            pausedText.offsetX(pausedText.width() / 2);
-            this.group.add(pausedText);
+        // "Paused" text
+        const pausedText = new Konva.Text({
+            x: STAGE_WIDTH / 2,
+            y: STAGE_HEIGHT / 2 - 150,
+            text: "Game Paused",
+            fontSize: 50,
+            fontFamily: "serif",
+            fill: "darkRed",
+            align: "center",
+        });
+        pausedText.offsetX(pausedText.width() / 2);
+        this.group.add(pausedText);
 
-            // Continue button
-            const continueButton = new Konva.Rect({
+        // Helper to create buttons
+        const createButton = (text: string, yOffset: number, onClick: () => void) => {
+            const button = new Konva.Rect({
                 x: STAGE_WIDTH / 2 - 100,
-                y: STAGE_HEIGHT / 2,
+                y: STAGE_HEIGHT / 2 + yOffset,
                 width: 200,
-                height: 60,
+                height: 50,
                 fill: "darkred",
                 cornerRadius: 10,
                 stroke: "maroon",
                 strokeWidth: 3,
             });
-            const continueText = new Konva.Text({
+            const buttonText = new Konva.Text({
                 x: STAGE_WIDTH / 2,
-                y: STAGE_HEIGHT / 2 + 15,
-                text: "Continue Game",
-                fontSize: 26,
+                y: STAGE_HEIGHT / 2 + yOffset + 12,
+                text: text,
+                fontSize: 24,
                 fontFamily: "serif",
                 fill: "white",
                 align: "center",
             });
-            continueText.offsetX(continueText.width() / 2);
+            buttonText.offsetX(buttonText.width() / 2);
 
-            // Continue group
-            const continueGroup = new Konva.Group();
-            continueGroup.add(continueButton);
-            continueGroup.add(continueText);
-            continueGroup.on("click", this.onContinueClick);
-            this.group.add(continueGroup);
+            const buttonGroup = new Konva.Group();
+            buttonGroup.add(button);
+            buttonGroup.add(buttonText);
+            buttonGroup.on("click", onClick);
 
-            // Continue button hover effects
-            continueGroup.on("mouseenter", () => {
+            // Hover effects
+            buttonGroup.on("mouseenter", () => {
                 document.body.style.cursor = "pointer";
-                continueButton.fill("maroon");
+                button.fill("maroon");
                 this.group.getLayer()?.draw();
             });
-            continueGroup.on("mouseleave", () => {
+            buttonGroup.on("mouseleave", () => {
                 document.body.style.cursor = "default";
-                continueButton.fill("darkred");
+                button.fill("darkred");
                 this.group.getLayer()?.draw();
             });
+
+            this.group.add(buttonGroup);
+        };
+
+        createButton("Continue Game", -50, this.onContinueClick);
+        createButton("Save Game", 20, this.onSaveClick);
+        createButton("Logout", 90, this.onLogoutClick);
     }
-    
+
     /**
      * Show the screen
      */

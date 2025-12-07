@@ -30,6 +30,7 @@
   "include": [
     "src",
     "frontend/src",
-    "frontend/tests"
+    "frontend/tests",
+    "vite.config.ts"
   ]
 }
