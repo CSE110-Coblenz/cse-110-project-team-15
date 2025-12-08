@@ -11,7 +11,7 @@ import { api } from "./api.ts";
  * Main Application - Coordinates all screens
  *
  * This class demonstrates screen management using Konva Groups.
- * Each screen (Menu, Game, Results) has its own Konva.Group that can be
+ * Each screen (Login, Menu, Game, Pause) has its own Konva.Group that can be
  * shown or hidden independently.
  *
  * Key concept: All screens are added to the same layer, but only one is
