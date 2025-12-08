@@ -8,8 +8,10 @@ export class LoginScreenController extends ScreenController {
     private screenSwitcher: ScreenSwitcher;
 
     constructor(screenSwitcher: ScreenSwitcher) {
-        super();
+        super(); // Call ScreenController constructor
         this.screenSwitcher = screenSwitcher;
+        
+        // Initialize the view with callbacks for login, guest, and register
         this.view = new LoginScreenView(
             (username: string, password: string) => this.handleLogin(username, password),
             () => this.handleGuest(),
@@ -17,6 +19,9 @@ export class LoginScreenController extends ScreenController {
         );
     }
 
+    /**
+     * Handles user registration
+     */
     private async handleRegister(user: string, pass: string): Promise<void> {
         try {
             const res = await api.register(user, pass);
@@ -30,6 +35,9 @@ export class LoginScreenController extends ScreenController {
         }
     }
 
+    /**
+     * Handles user login, authenticating with backend
+     */
     private async handleLogin(user: string, pass: string): Promise<void> {
         try {
             const res = await api.login(user, pass);
@@ -45,6 +53,9 @@ export class LoginScreenController extends ScreenController {
         }
     }
 
+    /**
+     * Handles guest login (no backend session)
+     */
     private handleGuest(): void {
         // Play as guest: no backend session. Warn user saves will not persist.
         this.view.showMessage("Playing as guest — progress will not be saved to your account.");
