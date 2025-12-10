@@ -73,10 +73,10 @@ class App implements ScreenSwitcher {
 		try {
 			await this.gameController.saveGame(true); // Silent save
 			await api.logout();
-			this.switchToScreen({ type: "login" });
+			this.switchToScreen({ type: "menu" });
 		} catch (err) {
 			console.error("Logout failed:", err);
-			this.switchToScreen({ type: "login" });
+			this.switchToScreen({ type: "menu" });
 		}
 	}
 

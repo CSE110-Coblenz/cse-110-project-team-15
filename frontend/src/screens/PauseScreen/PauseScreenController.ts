@@ -2,7 +2,6 @@ import { ScreenController } from "../../types.ts";
 import type { ScreenSwitcher } from "../../types.ts";
 import { PauseScreenView } from "./PauseScreenView.ts";
 
-
 /**
  * PauseScreenController - Handles pause screen interactions
  */
@@ -11,7 +10,7 @@ export class PauseScreenController extends ScreenController {
     private screenSwitcher: ScreenSwitcher;
 
     constructor(screenSwitcher: ScreenSwitcher, onSave: () => void, onLogout: () => void) {
-        super();
+        super(); // Call the ScreenController constructor
         this.screenSwitcher = screenSwitcher;
         this.view = new PauseScreenView(
             () => this.handleContinueClick(),
@@ -19,8 +18,6 @@ export class PauseScreenController extends ScreenController {
             onLogout
         );
     }
-
-
 
     /**
      * Handle continue game button click
@@ -30,7 +27,7 @@ export class PauseScreenController extends ScreenController {
     }
 
     /**
-     * Get the view group
+     * Get the Pause view for UI rendering
      */
     getView(): PauseScreenView {
         return this.view;

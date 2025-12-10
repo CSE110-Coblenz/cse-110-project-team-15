@@ -11,18 +11,17 @@ import { MainScene } from "./phaser/MainScene.ts";
 export class GameScreenView implements View {
 	private group: Konva.Group;
 	private notebook!: NotebookController;
-	private onPauseClick: () => void;
+	private onPauseClick: () => void; // Callback for pause button
 
-	//Hold a reference to the Phaser game & its container
+	// Hold a reference to the Phaser game & its container
 	private phaserGame!: Phaser.Game;
 	private phaserContainer?: HTMLDivElement;
 
-
 	constructor(onPauseClick: () => void) {
 		this.group = new Konva.Group({ visible: false });
-		this.onPauseClick = onPauseClick;
+		this.onPauseClick = onPauseClick; // Set the callback to pause the game
 
-		// Background
+		// Game screen background
 		const bg = new Konva.Rect({
 			x: 0,
 			y: 0,
@@ -42,7 +41,6 @@ export class GameScreenView implements View {
 			fill: "darkRed",
 			align: "center",
 		});
-
 		titleText.offsetX(titleText.width() / 2);
 		this.group.add(titleText);
 
@@ -86,11 +84,11 @@ export class GameScreenView implements View {
 			this.group.getLayer()?.draw();
 		});
 
-		//Find the root container that Konva is using
+		// Find the root container that Konva is using
 		const root = document.getElementById("container")
 
 		if (root) {
-			//create a div for phaser
+			// Create a div for phaser
 			const phaserDiv = document.createElement("div");
 			phaserDiv.id = "phaser-container";
 			phaserDiv.style.display = "none";
@@ -98,7 +96,7 @@ export class GameScreenView implements View {
 
 			this.phaserContainer = phaserDiv;
 
-			//phaser window setup
+			// Phaser window setup
 			this.phaserGame = new Phaser.Game({
 				type: Phaser.AUTO,
 				width: 600,
@@ -114,18 +112,17 @@ export class GameScreenView implements View {
 				},
 			});
 
-
-			//notebook setup
+			// Notebook setup 
 			this.notebook = new NotebookController(this.group);
 
-
+			// Hook phaser hint events -> notebook
 			if (this.phaserGame) {
 				this.phaserGame.events.on("hint-found", (hint: string) => {
 					this.notebook.addHint(hint);
 				});
 			}
 
-			//hook notebook visivility -> phaser visibility
+			// Hook notebook visibility -> phaser visibility
 			this.notebook.onVisibilityChange((visible) => {
 				if (visible) {
 					this.phaserContainer!.style.display = "none";
@@ -136,8 +133,6 @@ export class GameScreenView implements View {
 				}
 			});
 		}
-
-		// this.notebook = new NotebookController(this.group);
 	}
 
 	/**
@@ -159,19 +154,29 @@ export class GameScreenView implements View {
 		this.group.visible(false);
 		this.group.getLayer()?.draw();
 
+		// Hide phaser container
 		if (this.phaserContainer) {
 			this.phaserContainer.style.display = "none";
 		}
 	}
 
+	/** 
+     * Get the Konva group for rendering
+     */
 	getGroup(): Konva.Group {
 		return this.group;
 	}
 
+	/**
+	 * Get the Notebook controller
+	 */
 	getNotebookController(): NotebookController {
 		return this.notebook;
 	}
 
+	/**
+	 * Get the Phaser main scene
+	 */
 	getMainScene(): MainScene | undefined {
 		if (this.phaserGame && this.phaserGame.scene) {
 			return this.phaserGame.scene.getScene("MainScene") as MainScene;

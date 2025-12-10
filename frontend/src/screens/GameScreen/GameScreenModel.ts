@@ -12,7 +12,7 @@ export class GameScreenModel {
 	}
 
 	/**
-	 * Increment score when lemon is clicked
+	 * Increment score
 	 */
 	incrementScore(): void {
 		this.score++;

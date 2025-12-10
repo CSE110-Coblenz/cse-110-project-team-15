@@ -6,11 +6,11 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
  * LoginScreenView - renders a simple login form overlayed on the canvas
  */
 export class LoginScreenView implements View {
-    private group: Konva.Group;
-
-    private overlayEl: HTMLDivElement | null = null;
+    private group: Konva.Group; // Konva container for elements
+    private overlayEl: HTMLDivElement | null = null; // HTML overlay for login
 
     constructor(
+        // Callbacks for login, guest, and register actions
         onLogin: (user: string, pass: string) => void,
         onGuest: () => void,
         onRegister: (user: string, pass: string) => void
@@ -27,6 +27,7 @@ export class LoginScreenView implements View {
         });
         this.group.add(bg);
 
+        // Title text
         const title = new Konva.Text({
             x: STAGE_WIDTH / 2,
             y: 80,
@@ -55,6 +56,7 @@ export class LoginScreenView implements View {
         // Ensure the Konva container can position children
         container.style.position = container.style.position || "relative";
 
+        // The overlay that covers the entire canvas
         const overlay = document.createElement("div");
         overlay.style.position = "absolute";
         overlay.style.left = "0";
@@ -67,7 +69,7 @@ export class LoginScreenView implements View {
         overlay.style.pointerEvents = "auto";
         overlay.style.zIndex = "100";
 
-        // The card itself
+        // The login card
         const card = document.createElement("div");
         card.style.width = "420px";
         card.style.padding = "24px";
@@ -77,6 +79,7 @@ export class LoginScreenView implements View {
         card.style.border = "2px solid maroon";
         card.style.fontFamily = "serif";
 
+        // Heading for the login card
         const heading = document.createElement("h2");
         heading.textContent = "Log in or Play as Guest";
         heading.style.marginBottom = "12px";
@@ -85,6 +88,7 @@ export class LoginScreenView implements View {
         heading.style.fontFamily = "serif";
         card.appendChild(heading);
 
+        // Message area for errors and info
         const msg = document.createElement("div");
         msg.style.color = "darkred";
         msg.style.minHeight = "20px";
@@ -101,10 +105,12 @@ export class LoginScreenView implements View {
         userInput.style.border = "2px solid maroon";
         userInput.style.borderRadius = "8px";
         userInput.style.fontFamily = "serif";
+
         // Stop propagation so Phaser doesn't catch WASD keys
         userInput.addEventListener("keydown", (e) => e.stopPropagation());
         card.appendChild(userInput);
 
+        // Password input styled like parchment UI
         const passInput = document.createElement("input");
         passInput.placeholder = "Password";
         passInput.type = "password";
@@ -114,6 +120,7 @@ export class LoginScreenView implements View {
         passInput.style.border = "2px solid maroon";
         passInput.style.borderRadius = "8px";
         passInput.style.fontFamily = "serif";
+
         // Stop propagation so Phaser doesn't catch WASD keys
         passInput.addEventListener("keydown", (e) => e.stopPropagation());
         card.appendChild(passInput);
@@ -123,43 +130,46 @@ export class LoginScreenView implements View {
         btnRow.style.display = "flex";
         btnRow.style.gap = "8px";
 
+        // Login button
         const loginBtn = document.createElement("button");
         loginBtn.textContent = "Log in";
         loginBtn.style.flex = "1";
         this.styleButton(loginBtn);
         loginBtn.onclick = () => {
             msg.textContent = "";
-            onLogin(userInput.value, passInput.value);
+            onLogin(userInput.value, passInput.value); // Call login handler
         };
+         btnRow.appendChild(loginBtn);
 
+        // Guest button
         const guestBtn = document.createElement("button");
         guestBtn.textContent = "Play as Guest";
         guestBtn.style.flex = "1";
         this.styleButton(guestBtn);
-        guestBtn.onclick = () => onGuest();
+        guestBtn.onclick = () => onGuest(); // Call guest handler
+        btnRow.appendChild(guestBtn);
 
-        btnRow.appendChild(loginBtn);
-
+        // Register button
         const registerBtn = document.createElement("button");
         registerBtn.textContent = "Register";
         registerBtn.style.flex = "1";
         this.styleButton(registerBtn);
         registerBtn.onclick = () => {
             msg.textContent = "";
-            onRegister(userInput.value, passInput.value);
+            onRegister(userInput.value, passInput.value); // Call register handler
         };
         btnRow.appendChild(registerBtn);
 
-        btnRow.appendChild(guestBtn);
-        card.appendChild(btnRow);
-
-        overlay.appendChild(card);
-        container.appendChild(overlay);
+        card.appendChild(btnRow); // Append buttons row to card
+        overlay.appendChild(card); // Append card to overlay
+        container.appendChild(overlay); // Append overlay to container
 
         this.overlayEl = overlay;
     }
 
-    /** Apply consistent menu-style button theming */
+    /** 
+     * Apply consistent menu-style button theming 
+     */
     private styleButton(btn: HTMLButtonElement) {
         btn.style.background = "darkred";
         btn.style.color = "white";
@@ -170,7 +180,7 @@ export class LoginScreenView implements View {
         btn.style.fontFamily = "serif";
         btn.style.fontSize = "15px";
 
-        // Hover effect
+        // Button hover effect
         btn.onmouseenter = () => (btn.style.background = "maroon");
         btn.onmouseleave = () => (btn.style.background = "darkred");
     }
@@ -184,18 +194,27 @@ export class LoginScreenView implements View {
         if (msg) msg.textContent = text;
     }
 
+    /** 
+     * Show the login screen
+     */
     show(): void {
         this.group.visible(true);
         this.group.getLayer()?.draw();
         if (this.overlayEl) this.overlayEl.style.display = "flex";
     }
 
+    /** 
+     * Hide the login screen
+     */
     hide(): void {
         this.group.visible(false);
         this.group.getLayer()?.draw();
         if (this.overlayEl) this.overlayEl.style.display = "none";
     }
 
+    /** 
+     * Get the Konva group for rendering
+     */
     getGroup(): Konva.Group {
         return this.group;
     }

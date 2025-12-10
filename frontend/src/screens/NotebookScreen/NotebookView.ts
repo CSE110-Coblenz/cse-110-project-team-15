@@ -6,7 +6,6 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../../src/constants.ts";
  */
 export class NotebookView {
     // Notebook elements
-    // Notebook elements
     private group: Konva.Group;
     private parentGroup: Konva.Group;
     private pageText: Konva.Text;
@@ -26,13 +25,13 @@ export class NotebookView {
         this.group = new Konva.Group({ visible: false });
         this.parentGroup.add(this.group);
 
-        // Load and display the notebook image using Konva.Image.fromURL()
+        // Load and display the notebook image
         Konva.Image.fromURL("/notebook_icon.png", (image) => {
             image.width(80);
             image.height(80);
             image.x(STAGE_WIDTH / 2 - 380);
             image.y(STAGE_HEIGHT - 80);
-            image.on("click", () => this.onToggle());
+            image.on("click", () => this.onToggle()); // Toggle notebook on click
 
             // Notebook icon hover effects
             image.on("mouseenter", () => {
@@ -104,6 +103,7 @@ export class NotebookView {
                 this.parentGroup.getLayer()?.draw();
             });
 
+            // Tab click handler 
             tabRect.on("click", () => {
                 this.currentTab = tab;
                 this.highlightTab(tab);
@@ -158,20 +158,32 @@ export class NotebookView {
         this.group.add(closeButton);
     }
 
+    /**
+     * Updates the notebook page content
+     */
     updatePage(content: string): void {
         this.pageText.text(content);
         this.parentGroup.getLayer()?.draw();
     }
 
+    /**
+     * Sets the notebook visibility
+     */
     setVisible(visible: boolean): void {
         this.group.visible(visible);
         this.parentGroup.getLayer()?.draw();
     }
 
+    /**
+     * Gets the current visibility state (used by Phaser files)
+     */
     isVisible(): boolean {
         return this.group.visible();
     }
 
+    /**
+     * Highlights the selected tab
+     */
     private highlightTab(selected: string): void {
         const allTabs = this.group.find("Rect");
 

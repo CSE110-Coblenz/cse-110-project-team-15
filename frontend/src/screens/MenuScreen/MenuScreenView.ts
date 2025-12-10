@@ -109,6 +109,9 @@ export class MenuScreenView implements View {
 		this.group.getLayer()?.draw();
 	}
 
+	/**
+	 * Get the Konva group for rendering
+	 */
 	getGroup(): Konva.Group {
 		return this.group;
 	}

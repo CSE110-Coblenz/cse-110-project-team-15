@@ -9,10 +9,10 @@ import { api } from "../../api.ts";
 export class GameScreenController extends ScreenController {
 	private view: GameScreenView;
 	private screenSwitcher: ScreenSwitcher;
-	private saveInterval: any;
+	private saveInterval: any; // Store interval ID for auto-save
 
 	constructor(screenSwitcher: ScreenSwitcher) {
-		super();
+		super(); // Call the ScreenController constructor
 		this.screenSwitcher = screenSwitcher;
 		this.view = new GameScreenView(() => this.handlePauseClick());
 	}
@@ -23,13 +23,6 @@ export class GameScreenController extends ScreenController {
 	startGame(): void {
 		this.view.show();
 		this.startAutoSave();
-	}
-
-	/**
-	 * Get the view group
-	 */
-	getView(): GameScreenView {
-		return this.view;
 	}
 
 	/**
@@ -44,24 +37,28 @@ export class GameScreenController extends ScreenController {
 	 * @param silent If true, suppresses the success alert
 	 */
 	async saveGame(silent: boolean = false): Promise<void> {
-		const mainScene = this.view.getMainScene();
-		const notebook = this.view.getNotebookController();
+		const mainScene = this.view.getMainScene(); // Get the Phaser main scene
+		const notebook = this.view.getNotebookController(); // Get the Notebook controller
 
+		// Make sure both mainScene and notebook are available
 		if (!mainScene || !notebook) {
 			console.error("Cannot save game: Scene or Notebook not ready");
 			return;
 		}
 
+		// Gather game state data
 		const playerState = mainScene.getPlayerState();
 		const notebookState = notebook.getNotebookState();
 
+		// Make the game state object
 		const gameState = {
 			location: { room: "Start", x: playerState.x, y: playerState.y },
 			notebook: notebookState,
-			access: {}, // TODO: Implement access state
-			npc: [], // TODO: Implement NPC state
+			access: {},
+			npc: [],
 		};
 
+		// Save the game state using API
 		try {
 			await api.saveGame(gameState);
 			console.log("Game saved successfully");
@@ -117,18 +114,28 @@ export class GameScreenController extends ScreenController {
 			}
 			console.log("Game loaded:", data);
 
+			// Apply loaded state to the game
 			const mainScene = this.view.getMainScene();
 			const notebook = this.view.getNotebookController();
 
+			// Set player location
 			if (mainScene && data.location) {
 				mainScene.setPlayerState({ x: data.location.x, y: data.location.y });
 			}
 
+			// Set notebook state
 			if (notebook && data.notebook) {
 				notebook.setNotebookState(data.notebook as { clues: string[]; hints: string[]; lessons: string[] });
 			}
 		} catch (err) {
 			console.error("Failed to load game:", err);
 		}
+	}
+
+	/**
+     * Get the Game view for UI rendering
+     */
+	getView(): GameScreenView {
+		return this.view;
 	}
 }

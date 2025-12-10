@@ -7,9 +7,9 @@ import { STAGE_WIDTH, STAGE_HEIGHT } from "../../constants.ts";
  */
 export class PauseScreenView implements View {
     private group: Konva.Group;
-    private onContinueClick: () => void;
-    private onSaveClick: () => void;
-    private onLogoutClick: () => void;
+    private onContinueClick: () => void; // Callback for continue button
+    private onSaveClick: () => void; // Callback for save button
+    private onLogoutClick: () => void; // Callback for logout button
 
     constructor(onContinueClick: () => void, onSaveClick: () => void, onLogoutClick: () => void) {
         this.group = new Konva.Group({ visible: false });
@@ -17,7 +17,7 @@ export class PauseScreenView implements View {
         this.onSaveClick = onSaveClick;
         this.onLogoutClick = onLogoutClick;
 
-        // Background
+        // Pause screen background
         const bg = new Konva.Rect({
             x: 0,
             y: 0,
@@ -63,12 +63,13 @@ export class PauseScreenView implements View {
             });
             buttonText.offsetX(buttonText.width() / 2);
 
+            // Pause buttons group
             const buttonGroup = new Konva.Group();
             buttonGroup.add(button);
             buttonGroup.add(buttonText);
             buttonGroup.on("click", onClick);
 
-            // Hover effects
+            // Hover effects for buttons
             buttonGroup.on("mouseenter", () => {
                 document.body.style.cursor = "pointer";
                 button.fill("maroon");
@@ -83,6 +84,7 @@ export class PauseScreenView implements View {
             this.group.add(buttonGroup);
         };
 
+        // Create buttons to continue, save, and logout
         createButton("Continue Game", -50, this.onContinueClick);
         createButton("Save Game", 20, this.onSaveClick);
         createButton("Logout", 90, this.onLogoutClick);
@@ -104,6 +106,9 @@ export class PauseScreenView implements View {
         this.group.getLayer()?.draw();
     }
 
+    /**
+	 * Get the Konva group for rendering
+	 */
     getGroup(): Konva.Group {
         return this.group;
     }

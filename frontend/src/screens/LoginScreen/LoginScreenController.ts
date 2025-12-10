@@ -3,6 +3,9 @@ import type { ScreenSwitcher } from "../../types.ts";
 import { LoginScreenView } from "./LoginScreenView.ts";
 import { api } from "../../api.ts";
 
+/**
+ * LoginScreenController - Handles login interactions
+ */
 export class LoginScreenController extends ScreenController {
     private view: LoginScreenView;
     private screenSwitcher: ScreenSwitcher;
@@ -63,6 +66,9 @@ export class LoginScreenController extends ScreenController {
         setTimeout(() => this.screenSwitcher.switchToScreen({ type: "menu" }), 3000);
     }
 
+    /**
+     * Get the Login view for UI rendering
+     */
     getView(): LoginScreenView {
         return this.view;
     }

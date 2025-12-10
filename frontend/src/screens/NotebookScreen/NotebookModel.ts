@@ -15,13 +15,6 @@ export class NotebookModel {
     }
 
     /*
-     * Gets the current active tab name
-     */
-    getActiveTab(): string {
-        return this.activeTab;
-    }
-
-    /*
      * Gets all text related strings associated with the tab it's in
      */
     getContent(): string {
@@ -76,6 +69,9 @@ export class NotebookModel {
         this.lessons.push(lessonLearned);
     }
 
+    /* 
+     * Get the current state of the notebook for saving
+     */
     getState(): { clues: string[]; hints: string[]; lessons: string[] } {
         return {
             clues: [...this.clues],
@@ -84,6 +80,9 @@ export class NotebookModel {
         };
     }
 
+    /**
+     * Set the notebook state from a saved state
+     */
     setState(state: { clues: string[]; hints: string[]; lessons: string[] }): void {
         this.clues = state.clues || [];
         this.hints = state.hints || [];
