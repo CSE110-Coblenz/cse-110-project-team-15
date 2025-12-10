@@ -1,7 +1,7 @@
 import type { Group } from "konva/lib/Group";
 
 /**
- * Type definitions for the application
+ * Type definitions for the Application
  * 
  * Defines the core interfaces and abstract classes for screen management.
  * Includes Screen, View, ScreenController, and ScreenSwitcher.
@@ -38,6 +38,7 @@ export type Screen =
  * 
  * Base class for all screen controllers, providing common functionality.
  * Each specific screen controller extends this class.
+ * Key concept: Enforces encapsulation of screen logic.
  */
 export abstract class ScreenController {
 	// Returns the View associated with this controller
@@ -58,6 +59,7 @@ export abstract class ScreenController {
  * ScreenSwitcher interface
  * 
  * Defines the method to switch between different screens.
+ * Key concept: Centralized screen management.
  */
 export interface ScreenSwitcher {
 	// Switches to the specified screen

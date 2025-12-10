@@ -56,7 +56,7 @@ export class LoginScreenView implements View {
         // Ensure the Konva container can position children
         container.style.position = container.style.position || "relative";
 
-        // The overlay that covers the entire canvas
+        // The overlay that covers the entire canvas (transparent overlay)
         const overlay = document.createElement("div");
         overlay.style.position = "absolute";
         overlay.style.left = "0";
@@ -69,7 +69,7 @@ export class LoginScreenView implements View {
         overlay.style.pointerEvents = "auto";
         overlay.style.zIndex = "100";
 
-        // The login card
+        // The login card (centered box)
         const card = document.createElement("div");
         card.style.width = "420px";
         card.style.padding = "24px";
@@ -79,7 +79,7 @@ export class LoginScreenView implements View {
         card.style.border = "2px solid maroon";
         card.style.fontFamily = "serif";
 
-        // Heading for the login card
+        // Heading for the login card (displayed at the top)
         const heading = document.createElement("h2");
         heading.textContent = "Log in or Play as Guest";
         heading.style.marginBottom = "12px";
@@ -88,7 +88,7 @@ export class LoginScreenView implements View {
         heading.style.fontFamily = "serif";
         card.appendChild(heading);
 
-        // Message area for errors and info
+        // Message area for errors and info (displays feedback to the user)
         const msg = document.createElement("div");
         msg.style.color = "darkred";
         msg.style.minHeight = "20px";
@@ -113,7 +113,7 @@ export class LoginScreenView implements View {
         // Password input styled like parchment UI
         const passInput = document.createElement("input");
         passInput.placeholder = "Password";
-        passInput.type = "password";
+        passInput.type = "password"; // Hides password
         passInput.style.width = "100%";
         passInput.style.marginBottom = "12px";
         passInput.style.padding = "10px";
